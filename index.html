@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>猜数字游戏</title>
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-family: Arial, sans-serif;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 320px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: #667eea;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h1>🎯 猜数字游戏</h1>
+        <p>输入 1 - 10 之间的数字</p>
+        <p id="attempts">剩余次数：3</p>
+
+        <input id="inputBox" type="number" placeholder="输入你的答案">
+
+        <button id="btn" onclick="check()">提交</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        let secret = Math.floor(Math.random() * 10) + 1;
+        let attempts = 3;
+
+        function endGame(message, color) {
+            document.getElementById("result").innerHTML = message;
+            document.getElementById("result").style.color = color;
+            document.getElementById("inputBox").disabled = true;
+            document.getElementById("btn").disabled = true;
+        }
+
+        function updateAttempts() {
+            document.getElementById("attempts").innerText = "剩余次数：" + attempts;
+        }
+
+        function check() {
+            let guess = Number(document.getElementById("inputBox").value);
+
+            if (guess === secret) {
+                endGame("🎉 猜对了！", "green");
+                return;
+            }
+
+            attempts--;
+            updateAttempts();
+
+            if (attempts <= 0) {
+                endGame("❌ 次数用完了，正确答案是 " + secret, "red");
+                return;
+            }
+
+            let result = document.getElementById("result");
+
+            if (guess > secret) {
+                result.innerHTML = "📈 太大了";
+                result.style.color = "orange";
+            } else {
+                result.innerHTML = "📉 太小了";
+                result.style.color = "orange";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
