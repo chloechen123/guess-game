@@ -1,132 +1,1487 @@
-<!DOCTYPE html>
-<html lang="zh">
-
+<!doctype html>
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>猜数字游戏</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<style>:root{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>传播理论框架卡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@700&display=swap">
 
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            font-family: Arial, sans-serif;
-        }
+<style>
+:root{
+  --paper:#F2F4F1;
+  --card:#FFFFFF;
+  --band:#EDF0EC;
+  --ink:#16181A;
+  --muted:#6C726D;
+  --faint:#8E948F;
+  --accent:#9B2C2C;
+  --accent-soft:#F2E4E2;
+  --struct:#1F4E5F;
+  --struct-soft:#E2EDF0;
+  --rule:#DCDFDA;
+  --hair:#E7EAE5;
+  --mask:#D3D8D2;
+  --tip-bg:#F8F0EE;
+  --tip-edge:#E5CBC6;
+  --focus:#1F4E5F;
+  --on-solid:#FFFFFF;
+  --warn:#8A4B12;
+  --warn-bg:#FAEFE2;
 
-        .card {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            width: 320px;
-            text-align: center;
-        }
+  --f-display:"Noto Serif SC",Songti SC,SimSun,Georgia,serif;
+  --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-data:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,"Noto Sans SC","PingFang SC",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#121417;--card:#191C20;--band:#1F2328;--ink:#E6E8E4;--muted:#989E99;--faint:#7C837E;
+    --accent:#E08A7A;--accent-soft:#3A2422;--struct:#7DB8C6;--struct-soft:#1B2E34;
+    --rule:#2A2E34;--hair:#23272C;--mask:#343A40;--tip-bg:#2A1F1E;--tip-edge:#4A2F2C;
+    --focus:#7DB8C6;--on-solid:#121417;--warn:#D9A566;--warn-bg:#2C2419;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121417;--card:#191C20;--band:#1F2328;--ink:#E6E8E4;--muted:#989E99;--faint:#7C837E;
+  --accent:#E08A7A;--accent-soft:#3A2422;--struct:#7DB8C6;--struct-soft:#1B2E34;
+  --rule:#2A2E34;--hair:#23272C;--mask:#343A40;--tip-bg:#2A1F1E;--tip-edge:#4A2F2C;
+  --focus:#7DB8C6;--on-solid:#121417;--warn:#D9A566;--warn-bg:#2C2419;
+}
 
-        h1 {
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--f-body);font-size:15px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px 88px}
 
-        p {
-            color: #666;
-            font-size: 14px;
-        }
+/* ---------- masthead ---------- */
+.masthead{padding:44px 0 24px}
+.eyebrow{
+  font-family:var(--f-data);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 12px
+}
+h1{
+  font-family:var(--f-display);font-size:clamp(30px,5.2vw,44px);
+  line-height:1.2;margin:0 0 14px;text-wrap:balance;letter-spacing:.01em
+}
+.standfirst{margin:0;max-width:62ch;color:var(--muted);font-size:15px;line-height:1.75}
+.standfirst b{color:var(--ink);font-weight:700}
+.tally{
+  display:flex;flex-wrap:wrap;gap:0 26px;margin:22px 0 0;padding:16px 0 0;list-style:none;
+  border-top:1px solid var(--rule)
+}
+.tally li{display:flex;align-items:baseline;gap:8px}
+.tally .n{font-family:var(--f-data);font-weight:600;font-size:19px;color:var(--accent);font-variant-numeric:tabular-nums}
+.tally .k{font-size:12.5px;color:var(--muted)}
 
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-top: 15px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            font-size: 16px;
-            outline: none;
-        }
+/* ---------- toolbar ---------- */
+.toolbar{
+  position:sticky;top:0;z-index:20;
+  background:var(--paper);
+  background:color-mix(in srgb,var(--paper) 92%,transparent);
+  backdrop-filter:saturate(1.4) blur(8px);-webkit-backdrop-filter:saturate(1.4) blur(8px);
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  margin-bottom:28px;
+}
+.toolbar-in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.tbtn{
+  font-family:var(--f-body);font-size:13px;font-weight:500;color:var(--ink);background:var(--card);
+  border:1px solid var(--rule);border-radius:3px;padding:6px 12px;cursor:pointer;line-height:1.4;
+  transition:background .12s,border-color .12s,color .12s;
+}
+.tbtn:hover{border-color:var(--faint)}
+.tbtn[aria-pressed="true"]{background:var(--struct);border-color:var(--struct);color:var(--on-solid)}
+.tbtn.must[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-solid)}
+.tsearch{
+  flex:1 1 180px;min-width:150px;font-family:var(--f-body);font-size:13px;color:var(--ink);
+  background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:6px 10px;
+}
+.tsearch::placeholder{color:var(--faint)}
+.jump{display:flex;gap:4px;margin-left:auto}
+.jump a{
+  font-family:var(--f-data);font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;
+  padding:6px 9px;border:1px solid transparent;border-radius:3px
+}
+.jump a:hover{color:var(--accent);border-color:var(--rule)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
-        button {
-            width: 100%;
-            margin-top: 15px;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: #667eea;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+/* ---------- basis note ---------- */
+.basis{
+  display:grid;grid-template-columns:auto 1fr;gap:6px 14px;align-items:baseline;
+  font-size:13px;line-height:1.65;color:var(--muted);
+  padding:0 0 22px;margin:0 0 26px;border-bottom:1px solid var(--rule)
+}
+.basis dt{font-family:var(--f-data);font-size:11px;letter-spacing:.08em;color:var(--struct);white-space:nowrap}
+.basis dd{margin:0}
+.basis b{color:var(--ink);font-weight:700}
 
-        button:hover {
-            background: #5a67d8;
-        }
+/* ---------- framework tree ---------- */
+.tree-wrap{margin-bottom:30px}
+.tree-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin:0 0 12px}
+.tree-h h2{font-family:var(--f-display);font-size:18px;margin:0}
+.tree-h span{font-size:12.5px;color:var(--muted)}
+.tree{columns:2;column-gap:14px}
+.t-lec{background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:14px 16px 12px;margin:0 0 14px;break-inside:avoid;page-break-inside:avoid}
+.t-lec-h{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--hair)}
+.t-lec-no{font-family:var(--f-data);font-size:11.5px;font-weight:600;color:var(--accent);letter-spacing:.06em;white-space:nowrap}
+.t-lec-t{font-family:var(--f-display);font-size:14.5px;line-height:1.4}
+.t-jie{margin:9px 0 0}
+.t-jie-t{font-size:12.5px;font-weight:700;color:var(--struct);margin:0 0 3px}
+.t-jie-t .skipnote{font-weight:400;color:var(--faint)}
+.t-items{list-style:none;margin:0;padding:0 0 0 12px;border-left:1px solid var(--hair);display:grid;gap:2px}
+.t-items li{font-size:13px;line-height:1.55}
+.t-items a{color:var(--ink);text-decoration:none}
+.t-items a:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.t-items li.dim a{color:var(--faint)}
+.t-items .mk{
+  font-family:var(--f-body);font-size:10px;font-weight:700;line-height:1;
+  color:var(--accent);background:var(--accent-soft);
+  padding:2px 4px;border-radius:2px;margin-left:6px;vertical-align:1px;white-space:nowrap
+}
 
-        #result {
-            margin-top: 15px;
-            font-weight: bold;
-            font-size: 16px;
-        }
-    </style>
+/* ---------- lecture ---------- */
+.lecture{background:var(--card);border:1px solid var(--rule);border-radius:4px;margin-bottom:26px;overflow:hidden}
+.lec-head{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px;
+  padding:16px 22px;background:var(--band);border-bottom:1px solid var(--rule)
+}
+.lec-no{font-family:var(--f-data);font-weight:600;font-size:12px;letter-spacing:.1em;color:var(--accent)}
+.lec-title{font-family:var(--f-display);font-size:18px;margin:0;line-height:1.35}
+.lec-sub{font-size:12.5px;color:var(--muted);margin:0}
+.stars{font-family:var(--f-data);font-size:12px;color:var(--struct);letter-spacing:.04em;margin-left:auto;white-space:nowrap}
+
+.jie-head{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;
+  padding:12px 22px 8px;border-top:1px solid var(--rule);background:var(--card)
+}
+.lec-head + .jie-head{border-top:none}
+.jie-t{font-size:13px;font-weight:700;color:var(--struct);letter-spacing:.02em}
+.jie-note{font-size:12px;color:var(--faint)}
+
+/* ---------- entry ---------- */
+.entry{padding:13px 22px 15px;border-top:1px solid var(--hair)}
+.jie-head + .entry{border-top:none;padding-top:4px}
+.e-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin-bottom:9px}
+.e-name{font-weight:700;font-size:15.5px;letter-spacing:.01em}
+.tag{
+  font-family:var(--f-data);font-size:10.5px;font-weight:500;letter-spacing:.05em;
+  padding:2px 6px;border-radius:2px;background:var(--struct-soft);color:var(--struct);white-space:nowrap
+}
+.tag.exam{background:var(--accent-soft);color:var(--accent)}
+.tag.miss{background:var(--warn-bg);color:var(--warn)}
+.rows{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;align-items:baseline}
+.lab{display:flex;align-items:baseline;gap:5px;font-size:12.5px;color:var(--muted);white-space:nowrap;justify-self:start}
+.cnt{font-family:var(--f-data);font-size:12px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums}
+.val{font-size:14px;line-height:1.6;word-break:break-word}
+.val .num{font-family:var(--f-data);font-weight:600;font-variant-numeric:tabular-nums;color:var(--accent)}
+.val .em{font-weight:700;color:var(--accent)}
+.val .who{font-weight:700}
+.val .bk{color:var(--struct);font-weight:500}
+.val .sep{color:var(--faint);padding:0 2px}
+.entry.dim .e-name{color:var(--muted)}
+.entry.dim .val{opacity:.7}
+.tip{
+  display:block;margin-top:10px;padding:8px 12px;
+  border:1px solid var(--tip-edge);border-left:3px solid var(--accent);border-radius:2px;
+  background:var(--tip-bg);font-size:12.5px;color:var(--ink);line-height:1.65
+}
+.tip b{font-weight:700;color:var(--accent)}
+
+/* ---------- mask mode ---------- */
+body.masked .val{
+  color:transparent;background:var(--mask);border-radius:2px;cursor:pointer;user-select:none;
+  box-decoration-break:clone;-webkit-box-decoration-break:clone;
+}
+body.masked .val *{color:transparent!important;visibility:hidden}
+body.masked .val.peek{color:var(--ink);background:transparent;cursor:default;user-select:auto}
+body.masked .val.peek *{visibility:visible}
+body.masked .val.peek .num,body.masked .val.peek .em{color:var(--accent)!important}
+body.masked .val.peek .who{color:var(--ink)!important}
+body.masked .val.peek .bk{color:var(--struct)!important}
+body.masked .val.peek .sep{color:var(--faint)!important}
+body.masked .t-items a.val{display:inline-block;min-width:4em}
+body.masked .t-items a.val.peek{color:var(--ink)}
+body.masked .t-items .mk{visibility:hidden}
+body.masked .tip{display:none}
+
+.hidden{display:none!important}
+.emptynote{padding:26px 22px;color:var(--muted);font-size:14px;text-align:center}
+.entry,.lecture,.tree-wrap{scroll-margin-top:64px}
+
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--faint);line-height:1.8}
+.foot b{color:var(--muted);font-weight:500}
+
+@media (max-width:860px){
+  .tree{columns:1}
+}
+@media (max-width:640px){
+  .wrap{padding:0 14px 70px}
+  .masthead{padding:32px 0 20px}
+  .rows{grid-template-columns:1fr;gap:2px}
+  .lab{margin-top:6px}
+  .entry{padding:13px 16px 14px}
+  .lec-head,.jie-head{padding-left:16px;padding-right:16px}
+  .jump{margin-left:0;width:100%}
+  .basis{grid-template-columns:1fr;gap:2px}
+  .basis dd{margin-bottom:8px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- print / PDF ---------- */
+@media print{
+  @page{size:148mm 210mm;margin:10mm 9mm}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{background:#fff}
+  .toolbar{display:none}
+  .wrap{max-width:none;padding:0}
+  .masthead{padding:0 0 14px}
+  h1{font-size:26px}
+  .standfirst{font-size:12.5px;max-width:none}
+  .tally{margin-top:12px;padding-top:10px;gap:0 18px}
+  .tally .n{font-size:16px}
+  .basis{font-size:11px;padding-bottom:12px;margin-bottom:14px}
+  .tree{columns:1}
+  .t-lec{padding:9px 12px 8px;margin-bottom:8px;break-inside:avoid}
+  .t-items li{font-size:11.5px}
+  .tree-wrap{break-after:page}
+  .rows{grid-template-columns:auto 1fr;gap:4px 12px}
+  .lab{margin-top:0;font-size:11.5px}
+  .val{font-size:12.5px}
+  .e-name{font-size:13.5px}
+  .entry{padding:10px 14px 11px;break-inside:avoid}
+  .jie-head{padding:9px 14px 5px;break-after:avoid}
+  .lecture{border-radius:0;margin-bottom:16px}
+  .lec-head{padding:11px 14px;break-after:avoid;break-inside:avoid}
+  .lec-title{font-size:15px}
+  .tip{font-size:11px;break-inside:avoid}
+  .foot{break-inside:avoid;font-size:10.5px}
+  .emptynote{display:none}
+  body.masked .val{background:#F4F5F3;border-bottom:1px dotted #B4B9B3;border-radius:0}
+}
+</style>
 </head>
-
 <body>
+<div class="wrap">
 
-    <div class="card">
-        <h1>🎯 猜数字游戏</h1>
-        <p>输入 1 - 10 之间的数字</p>
-        <p id="attempts">剩余次数：3</p>
+  <header class="masthead">
+    <p class="eyebrow">宝厂「牛啊」传播理论背诵笔记 · 第九至十七讲 · 内容 · 媒介 · 受众 · 效果</p>
+    <h1>传播理论框架卡</h1>
+    <p class="standfirst">按「讲 → 节 → 知识点」搭的传播理论框架，现收<b>四个板块、第九至十七讲连续覆盖</b>：内容分析（9–10）、媒介分析（11–12）、受众分析（13–14）、效果分析（15–17）。先把<b>框架总览</b>默熟，再往下填。标着<b>上次失分</b>的，是 9/10 自测和 9/11 逐题考察里答错或没答出的点——在搜索框输「失分」就能只看这些；输「深大」能只看真题考过的点。</p>
+    <ul class="tally">
+      <li><span class="n" id="tally-e">0</span><span class="k">知识点</span></li>
+      <li><span class="n" id="tally-m">0</span><span class="k">必背</span></li>
+      <li><span class="n">97</span><span class="k">页 · p128–224</span></li>
+      <li><span class="n">9</span><span class="k">讲</span></li>
+    </ul>
+  </header>
 
-        <input id="inputBox" type="number" placeholder="输入你的答案">
-
-        <button id="btn" onclick="check()">提交</button>
-
-        <div id="result"></div>
+  <div class="toolbar">
+    <div class="toolbar-in">
+      <button class="tbtn" id="btn-mask" aria-pressed="false">遮挡自测</button>
+      <button class="tbtn must" id="btn-must" aria-pressed="false">只看必背</button>
+      <button class="tbtn" id="btn-reveal">全部显示</button>
+      <input class="tsearch" id="search" type="search" placeholder="搜索：地球村 / 麦克卢汉 / 深大 / 失分…" aria-label="搜索知识点">
+      <nav class="jump" aria-label="跳转">
+        <a href="#tree">总览</a><a href="#C09">9</a><a href="#C10">10</a><a href="#C11">11</a><a href="#C12">12</a><a href="#C13">13</a><a href="#C14">14</a><a href="#C15">15</a><a href="#C16">16</a><a href="#C17">17</a>
+      </nav>
     </div>
+  </div>
 
-    <script>
-        let secret = Math.floor(Math.random() * 10) + 1;
-        let attempts = 3;
+  <dl class="basis">
+    <dt>取舍依据</dt>
+    <dd>第十三、十四讲的星级来自 @我们喆 的批注，第十五至十七讲的取舍来自扣叔的批注（大考点、核心重点、不咋考……）。★★★★ 以上的、扣叔标「必背 / 大考点 / 核心重点」的，以及<b>深大真题直接考过</b>的点，都标成<b>必背</b>；深大考纲第 15 条点名的理论另标「考纲」。</dd>
+    <dt>星级</dt>
+    <dd>真题沙盘：第九讲 ★，第十讲 ★★★，第十一讲 ★★★，第十二讲 ★★★★，第十三、十四讲 ★★★★，第十五讲 ★★，第十六、十七讲 ★★★★★。<b>但星级不等于深大不考</b>——第九讲的「信息窄化」深大 2022、2025 连考两年；第十讲扣叔标了「不考文化研究的直接忽略」，而深大 2024 年的跨媒体叙事正是文化研究学派的基础知识。这两处按必背处理。</dd>
+    <dt>和骨架卡</dt>
+    <dd>第十五至十七讲另有「传播效果骨架卡」——那张只放年份、人名、清单和失分批注，用来针对性补漏；这张按章节搭完整框架，用来默写。</dd>
+  </dl>
 
-        function endGame(message, color) {
-            document.getElementById("result").innerHTML = message;
-            document.getElementById("result").style.color = color;
-            document.getElementById("inputBox").disabled = true;
-            document.getElementById("btn").disabled = true;
-        }
+  <section class="tree-wrap" id="tree">
+    <div class="tree-h"><h2>框架总览</h2><span>每天早上合上书默写的就是这一张</span></div>
+    <div class="tree" id="tree-grid"></div>
+  </section>
 
-        function updateAttempts() {
-            document.getElementById("attempts").innerText = "剩余次数：" + attempts;
-        }
+  <main id="content"></main>
 
-        function check() {
-            let guess = Number(document.getElementById("inputBox").value);
+  <p class="foot">
+    <b>数据来源</b>　宝厂「牛啊」传播理论背诵笔记 pp.128–224（第九至十七讲）、宝厂传播理论高频题目与答案库 pp.58–104、宝厂·深圳大学专硕真题沙盘。<br>
+    <b>星级</b>　第十三、十四讲知识点星级取自 @我们喆 的批注，第十五至十七讲取自扣叔的批注；讲次星级取自真题沙盘；分值取自高频题库。「上次失分」来自 9/10 自测与 9/11 逐题考察。
+  </p>
+</div>
 
-            if (guess === secret) {
-                endGame("🎉 猜对了！", "green");
-                return;
-            }
+<script>
+/* row = [标签, 值, 条数?]  值标记：{数字}  [人名]  《书》  <em>强调</em>  <sep> */
+const DATA = [
+{
+  id:"C09", no:"第九讲", stars:"★", pages:"p128–145",
+  title:"信息与符号——传播的基本材料",
+  jie:[
+  { t:"一、传播研究中的信息 · 信息及其相关概念", entries:[
+    { id:"xx9", n:"信息", tags:["5分名解","考得很少"], rows:[
+      ["定义骨架","在一种情况下能够<em>减少或消除不确定性</em>的任何事物，是人类的精神创造物"],
+      ["六个特点","客观性<sep>普遍性<sep>表达性<sep>流动性<sep>载体性<sep>分享性",6],
+      ["两大功能","认识功能<sep>社会功能（资源、启迪、教育、方法论、娱乐、舆论）",2]
+    ], tip:"和新闻理论框架卡第三讲的「信息」是同一条（香农狭义／维纳一般性／广义三层定义在那边）——一次背熟，两门课通用。" },
+    { id:"wzjs", n:"信息是物质载体与精神内容的有机统一体", tags:["20分简答"], rows:[
+      ["核心命题","信息是由<em>物理载体</em>和<em>意义</em>构成的统一整体（德国哲学家 [克劳斯]）"],
+      ["四条论证","精神内容的载体都表现为一定的<em>物质讯号</em>（可视、可听、可感）<sep>作为载体的<em>符号系统</em>本身也是精神劳动的创造物<sep>主观性与客观性：社会信息是物质系统运动过程的表现<sep>多样性与复杂性：社会形态与个体差异导致接受、理解、使用的差异",4],
+      ["第一性 / 第二性","客观世界的信息是<em>第一性</em>的，人脑中反映的信息是<em>第二性</em>的、观念形态的"],
+      ["结尾口径","社会信息是<em>物质载体与精神内容</em>的统一、<em>主体与客体</em>的统一、<em>符号与意义</em>的统一"],
+      ["考过","东北财经大学 {2024}"]
+    ]},
+    { id:"sanlun", n:"三论中的信息：熵 · 噪音 · 冗余 · 反馈 · 前馈", tags:["噪音是考点","5分名解"], rows:[
+      ["熵","度量信息量的概念，指系统的<em>混乱程度与不确定性</em>；源自 [玻尔茨曼] 的熵等式——<em>信息等于负熵</em>"],
+      ["噪音","传播过程中的附加、减损、失真或错误；非有意附加在信号上的<em>干扰</em>，可由冗余信息抵消"],
+      ["噪音三类型","<em>语义</em>的噪音（理解差异）<sep><em>机械</em>的噪音（机器故障）<sep><em>形式</em>／环境噪音（过程之外的干扰）",3],
+      ["冗余信息","消息中重复或可预测的部分，不增加新信息，但能<em>抵消噪音</em>；冗余越多，信息量越少"],
+      ["反馈","控制论核心概念——把输出再回输到系统；分<em>正反馈</em>（放大变化）与<em>负反馈</em>（纠正偏差）"],
+      ["前馈","在输入端预先补偿可能的干扰——<em>预见性</em>控制，解决反馈的滞后性；如节目制作前的市场调研与受众分析"]
+    ]},
+    { id:"xxll", n:"信息流量：信息低量 · 信息过载 · 信息爆炸", tags:["会考后两个"], rows:[
+      ["信息低量","不能及时有效接受外界信息，或接受的信息量过小"],
+      ["信息过载","信息流通<em>超出受众的接受或处理能力</em>；原因是个人接收处理的时间能力有限，而媒介传播能量可无限拓展"],
+      ["过载的四种表现","反应速度远低于传播速度<sep>信息量高于能消费承受的程度<sep>冗余信息干扰准确分辨<sep>超量信息成为一种<em>人为的噪音</em>",4],
+      ["信息爆炸","当代社会各种信息大量出现并加速增长；四类剧增：新闻、娱乐、广告、科技信息",4],
+      ["关键提醒","信息爆炸 ≠ 知识爆炸——增长失衡反而可能导致<em>知识匮乏</em>"]
+    ]}
+  ]},
+  { t:"一、传播研究中的信息 · 信息社会", note:"扣叔：低频考点", entries:[
+    { id:"xxsh", n:"信息社会", tags:["15分简答","低频"], rows:[
+      ["定义骨架","又称后工业社会、信息化社会；以信息的创造、分配、使用、整合和操纵为核心经济政治文化活动形态的社会"],
+      ["三位学者","[丹尼尔·贝尔]「后工业社会三部曲」<sep>[托夫勒]《第三次浪潮》<sep>[奈斯比特] {1982} 明确提出世界正从工业社会向信息社会过渡",3],
+      ["起点","萌芽于 {20世纪50年代} 的「信息革命」"],
+      ["四大特征","经济主体由制造业转向以高科技为核心的<em>第三产业</em><sep>劳动主体由机械操作者转为<em>信息的生产者与传播者</em><sep>交易结算从现金支付转向<em>信用支付</em><sep>贸易突破国界，<em>跨国与全球贸易</em>成为主流",4]
+    ]}
+  ]},
+  { t:"一、传播研究中的信息 · 信息环境", note:"扣叔：高频考点，背一次就好", entries:[
+    { id:"xxhj", n:"信息环境", tags:["必背","高频"], must:1, rows:[
+      ["定义骨架","一个社会中由个人或群体<em>接触可能的信息及其传播活动</em>的总体构成的环境"],
+      ["三个特点","基本要素是有特定含义的语言、文字、声音、图画、影像等<em>信息符号</em><sep>不仅是告知性的，更是<em>提示性或指示性</em>的，对人的行为有制约作用<sep>某类信息传播达到一定规模即形成潮流，因而具有<em>社会控制</em>功能",3],
+      ["与客观环境的关系","传统社会两者重合；现代社会因大众传播发达而<em>分离</em>，成为不同于环境本身的「<em>二次环境</em>」"],
+      ["大众传播的两个优势","大量生产、复制、大面积传播，短时间传遍社会<sep>公开性、权威性、显著性、直达性",2]
+    ]},
+    { id:"njhj", n:"拟态环境", tags:["必背","5分名解"], must:1, rows:[
+      ["提出","[李普曼]　{1922}　《舆论》"],
+      ["定义骨架","大众传媒制造出来的<em>信息环境</em>——pseudo-environment"],
+      ["形成原因","现代社会巨大化复杂化，人的活动范围、精力、注意力有限，超出亲身感知的事物只能通过「<em>新闻供给机构</em>」了解"],
+      ["机制","不是现实环境的<em>镜子式再现</em>，而是传媒对象征性事件或信息进行<em>选择、加工、重新结构化</em>后提示的环境；因为加工在媒介内部进行，人们通常意识不到，往往把它当作客观环境本身"],
+      ["理论地位","为<em>议程设置</em>理论奠定基础；也是<em>涵化理论、沉默的螺旋、知沟</em>共同分享的理论基础"]
+    ], tip:"这条是第十七讲那一串宏观效果理论的共同地基——议程设置、培养理论、沉默的螺旋、知沟都建在「拟态环境」上。答那几道题时开头引一句，立刻有理论纵深。" },
+    { id:"njhjh", n:"拟态环境的环境化", tags:["必背","30分论述"], must:1, rows:[
+      ["提出","[藤竹晓]　{1968}　在李普曼基础上提出"],
+      ["定义骨架","许多「<em>拟态事件</em>」（语言、观念、价值、生活或行为方式）最初并无代表性或普遍性，一旦进入大众传播渠道，很快演化为社会流行现象，<em>变成随处可见的社会现实</em>"],
+      ["机制","人们根据媒介提供的信息认识环境、采取适应行动 → 这些行动作用于现实环境 → 现实环境越来越带有「拟态环境」的特点"],
+      ["网络时代的发展","形成机制更复杂，封闭、扭曲与变形并未减少甚至增加；网络空间与现实空间进一步融合会使「环境化」加剧"]
+    ]}
+  ]},
+  { t:"一、传播研究中的信息 · 信息窄化", note:"扣叔：高频考点，会考辨析——而且是深大 2022、2025 连考两年的点", entries:[
+    { id:"xxjf", n:"信息茧房", tags:["考纲","必背","5分名解","深大考过"], must:1, rows:[
+      ["提出","[凯斯·桑斯坦]（Cass Sunstein）　{2006}　《信息乌托邦——众人如何生产知识》"],
+      ["定义骨架","公众的信息需求并非全方位，只注意自己选择的东西和使自己愉悦的领域，久而久之把自身桎梏于<em>蚕茧般的「茧房」</em>中"],
+      ["呈现形式","「<em>我的日报</em>」（Daily Me）——按自己的喜好量身打造一份日报"],
+      ["三条成因","<em>选择性心理与个人差异</em>——茧房一直存在，算法不是唯一成因<sep>海量信息个体化——是信息过剩时代的一种<em>自我保护</em><sep>「<em>独异性</em>」社会的外在表现（[莱克维茨]）",3],
+      ["解决策略","桑斯坦「网络世界的『<em>人行道</em>』模式」——在个性化推荐中巧妙穿插异质信息，像走在真实街道上会遇到意外"],
+      ["评价","基于美国政治极化背景，多国研究表明用户实际接触仍具多样性；中国学界有<em>概念泛化</em>倾向、缺乏本土实证"]
+    ], tip:"<b>深大 2025 年 440 简答原题</b>：「请简述你对『信息茧房』现象的理解及其影响因素」（10 分）。「影响因素」答三条成因，再补一句评价里的「算法不是唯一成因」，比只写定义高一个层次。" },
+    { id:"hsy", n:"回声室效应", tags:["必背","5分名解","深大考过"], must:1, rows:[
+      ["提出","{2010}　[凯瑟琳·霍尔·贾米森] & [约瑟夫·卡佩拉]　《回声室》"],
+      ["隐喻来源","声学现象——封闭空间内声音被不断反射而产生回响"],
+      ["定义骨架","信息或观点在特定空间里<em>接收相似信息或观点的回应而得到巩固和加强</em>"],
+      ["影响","降低信息成本、符合心理诉求；但容易两极分化，形成狭窄的<em>意识形态集群</em>，使竞争性信息受到审查、否定或无法充分表达"],
+      ["与茧房的关系","因为信息茧房的存在，人们只选择意见相同的人群 → 逐渐形成回音室 → 是走向极端、群体化事件的<em>温床</em>"]
+    ]},
+    { id:"gltp", n:"过滤气泡", tags:["必背","5分名解","深大考过"], must:1, rows:[
+      ["提出","[伊莱·帕里泽]　《过滤气泡：互联网没有告诉你的事》"],
+      ["原指","<em>搜索引擎推荐算法</em>阻碍人们认识真实世界某些层面的现象"],
+      ["机制","个性化搜索基于用户数据（位置、点击行为、搜索历史）猜测用户想看什么 → 用户与不同意其观点的信息<em>相分离</em>，被隔离在自己的文化或意识形态泡沫中"],
+      ["社交媒体加深","根据已显露的偏好及相似好友的偏好推荐，时间线充斥想法类似的帖子"],
+      ["启示","算法个性化推送的弊病——使用户丧失公共生活的空间和对公共生活的兴趣"]
+    ]},
+    { id:"sanbianxi", n:"信息茧房 · 回声室 · 过滤气泡 三者辨析", tags:["考纲","必背","20分简答","深大原题"], must:1, rows:[
+      ["成因不同","信息茧房＝<em>受众主动</em>的选择性心理<sep>回声室＝<em>同质社群</em>内部的相互加强<sep>过滤气泡＝<em>算法被动</em>推送造成的隔离",3],
+      ["主体不同","茧房在<em>个人</em>层面<sep>回声室在<em>群体</em>层面<sep>气泡在<em>技术／平台</em>层面",3],
+      ["提出者与时间","桑斯坦 {2006}<sep>贾米森 & 卡佩拉 {2010}<sep>帕里泽",3],
+      ["共同点","都指向<em>信息窄化</em>——接触面收窄、异质观点被排除、公共性受损"],
+      ["答题落点","三者不是同义词：一个讲<em>选择</em>，一个讲<em>回响</em>，一个讲<em>过滤</em>；治理上分别对应媒介素养、群体对话、算法透明"]
+    ], tip:"<b>深大 2022 年 440 简答原题</b>：「请阐释『回声室效应』『信息茧房』及『过滤气泡』三个概念的异同」（10 分）。高频题库第九讲第七题就是这道的 20 分版本。加上 2025 年又考了信息茧房——<b>这一节是深大在第九讲唯一反复考的地方</b>。" },
+    { id:"bej", n:"网络巴尔干化 · 群体极化", tags:["配套"], rows:[
+      ["网络巴尔干化","又称赛博空间的巴尔干化；[马歇尔·范·阿尔斯泰恩] & [埃里克·布莱卓夫森] 提出——多样化、非整合的网络容易形成<em>同质化孤立的小团体</em>，内部交往大过群外交往"],
+      ["群体极化 · 定义","个体原有的态度倾向，经群体交流讨论后被<em>强化</em>，最后形成比原来更极端的态度"],
+      ["群体极化 · 起源","{20世纪60年代} 发轫于社会心理学，关注小群体决策"],
+      ["群体极化 · 网络版","[桑斯坦]《网络共和国——网络社会中的民主问题》指出网络中也存在群体极化"],
+      ["双重意义","积极：提高群体内聚力与行为一致性<sep>消极：使错误判断更趋固化、极端",2]
+    ]}
+  ]},
+  { t:"二、传播研究中的符号与意义 · 符号", entries:[
+    { id:"fh", n:"符号", tags:["5分名解","15分简答"], rows:[
+      ["定义骨架","用来<em>指代或代表其他事物</em>的象征物，意义由人为赋予而非天然固定；是传播者与受众之间的<em>中介</em>"],
+      ["三个特征","<em>指代性</em>（约定俗成而非必然联系）<sep><em>社会共有性</em><sep><em>发展性</em>",3],
+      ["三项基本功能","<em>表述与理解</em>功能<sep><em>传达</em>功能（跨越时空保存与传播）<sep><em>思考</em>功能（思维操作的基本单元）",3],
+      ["语言符号的功能","报告事实、推论未知、作出判断"],
+      ["非语言符号的功能","传播态度情绪、辅助语言表达、直接替代语言"]
+    ]},
+    { id:"nzsz", n:"能指与所指", tags:["必背","考点"], must:1, rows:[
+      ["提出","[费迪南·德·索绪尔]　《普通语言学教程》——结构主义语言学的基础"],
+      ["能指 Signifiant","符号的<em>物质形式</em>——声音形象或书写形态"],
+      ["所指 Signifié","能指背后的<em>概念或意义</em>"],
+      ["核心论断","两者之间<em>没有天然联系</em>，关系是任意约定的，由社会文化背景决定"],
+      ["两大特征","<em>任意性</em><sep><em>差异性</em>（意义通过与其他符号的对比区分而显现）",2]
+    ]},
+    { id:"prs", n:"皮尔斯的符号三分式", tags:["配套"], rows:[
+      ["提出","[查尔斯·桑德斯·皮尔斯]——现代符号学奠基人之一"],
+      ["三元结构","<em>符号／再现体</em>（Representamen）<sep><em>对象</em>（Object）<sep><em>解释项</em>（Interpretant）",3],
+      ["解释项","符号被理解后在解释者心中产生的效果，可以是另一种符号，从而形成连续的<em>符号链</em>"],
+      ["三种符号性质","<em>图标性</em>（相似）<sep><em>指示性</em>（直接联系）<sep><em>象征性</em>（约定俗成）",3],
+      ["与索绪尔的差别","超越形式／意义的二元对立，强调意义的<em>动态性和交互性</em>"]
+    ]},
+    { id:"xhxz", n:"信号与象征符", tags:["必背","考点"], must:1, rows:[
+      ["信号 Signal","<em>物理性质</em>；与对象事物是固定的因果关系、一对一；不需学习，本能反应；如冒烟＝着火"],
+      ["象征符 Symbol","<em>人类语义性质</em>；与对象的关系随意、多对多；必须<em>通过学习或传统继承</em>；如语言、国旗、货币"],
+      ["四条对照维度","物理／语义性质<sep>对象关系（固定因果／随意）<sep>遗传性／学习性<sep>社会文化属性（无／随文化变迁）",4]
+    ]},
+    { id:"yyfh", n:"语言符号与非语言符号", tags:["配套"], rows:[
+      ["语言符号","以<em>语音和字形</em>为物质外壳，以词汇为建筑材料，以语法为结构规律"],
+      ["语言符号四特点","词语创造的随意性<sep>开放性<sep>概括性<sep>社会性",4],
+      ["非语言符号六特点","组合性<sep>连续性<sep>不可控性<sep>某些符号的普遍意义<sep>受环境制约、具有自发性<sep>易为人相信",6],
+      ["非语言符号三类","语言符号的<em>伴生符</em>（声音、文字等）<sep><em>体态符号</em>（动作、手势、表情）<sep><em>物化、活动化、程式化、仪式化</em>的符号（徽章、旗帜、服装）",3],
+      ["功能关系","非语言符号<em>补充</em>语言符号在传播中的不足、损失或欠缺"]
+    ]}
+  ]},
+  { t:"二、传播研究中的符号与意义 · 意义", entries:[
+    { id:"yy", n:"意义", tags:["基础"], rows:[
+      ["定义骨架","人<em>为对象事物赋予的含义</em>，是以特定符号形式传递和交流的精神内容；符号是意义的<em>载体与表现形态</em>"],
+      ["三组分类","诗学与语义学：明示性／暗示性意义<sep>逻辑学：外延／内涵意义<sep>符号学：指示性／区别性意义",3],
+      ["暧昧性两方面","语言符号本身意义的<em>模糊</em><sep>语言符号的<em>多义性</em>（含同音异义）",2],
+      ["辩证看待","暧昧与多义可能成为障碍，但人类也能积极利用它来创造和表达<em>新的意义</em>"]
+    ]},
+    { id:"cbyy", n:"传播过程中的意义与情境意义", tags:["会单独考"], rows:[
+      ["三种意义","<em>传播者</em>的意义（主观意图）<sep><em>受传者</em>的意义（据自身经验解读）<sep><em>情境</em>意义（环境和条件附加的意义）",3],
+      ["情境意义 · 定义","由一系列<em>情境符号</em>及其相互结合所形成的意义"],
+      ["机制","[罗曼·雅各布森]：语言符号不可能提供传播的全部意义，交流所得有相当一部分<em>来自语境</em>"],
+      ["传播情境","对特定传播行为直接或间接产生影响的外部事物、条件或因素的总称；广义上也包括群体、组织、制度、规范、语言、文化"]
+    ]},
+    { id:"fhzw", n:"为什么符号本身之外还有意义", tags:["简答"], rows:[
+      ["四条理由","意义的<em>胚芽</em>与清晰化——想法未找到符号前先以非符号形式存在<sep><em>形式与内容</em>的动态平衡——符号稳定、意义随社会变迁更新<sep>个人能力的局限与传播隔阂——「词不达意」<sep><em>情境意义</em>的补充与制约",4],
+      ["结尾口径","符号之外的意义不与「符号和意义的有机统一」相悖，反而彰显人类符号活动的多样性与复杂性"]
+    ]}
+  ]},
+  { t:"二、传播研究中的符号与意义 · 象征性社会互动", entries:[
+    { id:"xzxw", n:"象征行为", tags:["配套"], rows:[
+      ["定义骨架","用<em>具体事物</em>表示某种<em>抽象概念或思想感情</em>的行为；象征能力是人类特有的基本能力"],
+      ["四个特点","<em>类似性</em>（第一层字面义向第二层联想义转化）<sep><em>智慧性</em><sep><em>社会性和约定性</em><sep><em>价值性、动机性和行为取向性</em>",4]
+    ]},
+    { id:"fhhd", n:"象征性社会互动理论（符号互动论）", tags:["必背","20分简答"], must:1, rows:[
+      ["正式提出","[赫伯特·布卢默]　{1937}　《人与社会》正式提出「象征互动理论」并定名<em>符号互动论</em>"],
+      ["思想源头","[米德] 阐发；其论文讲稿集《精神、社会与自我》影响重大；经芝加哥学派发展"],
+      ["核心问题","考察以<em>象征符（尤其是语言）</em>为媒介的人与人之间的互动关系"],
+      ["三个基本前提","人根据<em>对象对他们所具有的意义</em>采取行动<sep>意义是在<em>社会互动</em>过程中产生的<sep>意义由<em>人来解释</em>",3],
+      ["三层内容","互动是通过象征符交流或交换<em>意义</em>的活动<sep>意义在本质上只有通过<em>交换</em>才能成立<sep>交换的前提是双方有<em>共通的意义空间</em>",3],
+      ["功能","赋予行为动机、确定行为取向"]
+    ]},
+    { id:"zwhd", n:"自我互动理论", tags:["配套"], rows:[
+      ["提出","[布鲁默]　{1969}　《象征互动论》"],
+      ["本质","社会互动的<em>内在化</em>——把他人的期待内化为自我认知的参照系"],
+      ["能动性","不是简单复制：个体在人内传播中会能动地<em>解释、选择、修改和重构</em>这些期待"],
+      ["米德的呼应","「<em>主我</em>」与「<em>客我</em>」的对话构成自我意识"]
+    ]},
+    { id:"gtyy", n:"共通的意义空间", tags:["必背","15分简答"], must:1, rows:[
+      ["定义骨架","传播成立的重要前提——交换双方对所传递的讯息有<em>共通或较为相似的理解和解释</em>；也称「共同经验范围」"],
+      ["两层含义","对所使用的<em>语言、文字等符号含义</em>的共通理解<sep>大体一致或接近的<em>生活经验和文化背景</em>",2],
+      ["三条启示","受传者往往只能「译出」与自己经验<em>重合</em>的含义<sep>只要意义空间存在<em>交集</em>，就仍能交换意义，且交集会不断扩大<sep>传播的重要功能之一就是<em>扩大共通的意义空间</em>",3]
+    ]}
+  ]},
+  { t:"二、传播研究中的符号与意义 · 象征性文化与现代社会", entries:[
+    { id:"xzwh", n:"象征性文化", tags:["配套"], rows:[
+      ["定义骨架","以<em>象征符形式</em>表现的、承载和传承人类生活知识与态度的<em>观念体系</em>"],
+      ["两个特征","<em>符号性与社会性</em>（由人创造，经社会契约形成共识，具强制性规范作用）<sep><em>动态性与创新性</em>（现代社会象征符创造高频化、碎片化）",2],
+      ["三种表现","消费文化的<em>符号化</em><sep>媒介与符号生产的<em>民主化</em>（表情包、网络流行语）<sep><em>符号过载</em>与社会影响",3],
+      ["消极影响","象征符过滥供给、过频变动 → 意义、价值和规范的<em>流动化和无序化</em>；[林进] 警示激进的符号变革会破坏传播连续性"]
+    ]},
+    { id:"xfsh", n:"消费社会与消费文化", tags:["必背","20分简答"], must:1, rows:[
+      ["提出","法国学者 [鲍德里亚]"],
+      ["定义骨架","生产相对过剩，<em>消费成为社会生活和生产的主导动力和目标</em>；消费超出实际需求，变成对<em>符号化物品所蕴含「意义」的消费</em>"],
+      ["两个表现","<em>差异化</em>——通过消费物的符号意义获得自我与他人的身份认同<sep><em>风格传播</em>——流行性越来越强、流行周期越来越短",2],
+      ["两个关键词","<em>仿真</em>（simulacra）<sep><em>超现实</em>（hyperreality）——真实与虚构的界限变得模糊",2],
+      ["浪费的功能","在消费社会中浪费不是非理性行为，而是具有独特功能的<em>特殊符号</em>；炫耀性消费加速生态危机"],
+      ["符号交换理论","《象征交换与死亡》：「<em>所指的价值</em>」被取消，符号只进行内部交换、不与真实互动，指向的是<em>人们的欲望</em>，因而可被操控"]
+    ]}
+  ]}
+  ]
+},
+{
+  id:"C10", no:"第十讲", stars:"★★★", pages:"p146–154",
+  title:"传播内容还是大众文化？——经验与批判的视角差异",
+  jie:[
+  { t:"一、大众传播的内容研究", note:"扣叔：仅《传播学总论》学习者背，其他版本了解一个「新黄色新闻」即可", entries:[
+    { id:"nrtz", n:"大众传播内容的特征", tags:["简单背"], rows:[
+      ["定义骨架","经<em>把关人</em>搜集、整理、加工、传播的信息"],
+      ["四个特征","<em>公开性</em><sep><em>开放性</em><sep><em>大众性</em><sep><em>复制性</em>",4]
+    ]},
+    { id:"xxyl", n:"信息娱乐", tags:["5分名解","简单背"], rows:[
+      ["英文 · 构成","Infotainment ＝ information ＋ entertainment"],
+      ["定义骨架","当代大众传播中信息内容与<em>娱乐成分相互融合</em>的现象"],
+      ["时间","兴起于 {20世纪60年代}，{80年代后期} 随市场力量增强与管制放松而日趋显著"],
+      ["典型原则","「<em>后院篱笆原则</em>」——选题转向普通人的日常关切；如 {1982} 黛安娜王妃产子被置于马岛战争之上"],
+      ["两种评价","负面：[卡尔·伯恩斯坦] 认为以感官刺激取代深度报道，削弱知情权与政治参与<sep>正面：「非常规再现」降低理解门槛；[安妮·布兰斯孔] 以《芝麻街》论证<em>教育娱乐</em>（Edutainment）",2]
+    ]},
+    { id:"djqw", n:"低级趣味内容 · 市场驱动新闻业", tags:["不背"], dim:1, rows:[
+      ["低级趣味内容","[梅尔文·德弗勒] 的趣味金字塔<em>底层</em>；三层＝高级趣味／无争议内容／低级趣味"],
+      ["市场驱动新闻业","[约翰·麦克马纳斯]《市场新闻业：公民自行小心？》；「引导价值—娱乐价值」四象限"]
+    ]},
+    { id:"xhsxw", n:"新黄色新闻", tags:["必背","5分名解"], must:1, rows:[
+      ["定义骨架","数字时代衍生的<em>类黄色新闻变体</em>——低分辨率、「黄底黑字＋镂空红字」统一封面，内容琐碎，新闻六要素严重残缺"],
+      ["政策界定","{2024年4月} 中央网信办「清朗 · 整治自媒体无底线博流量」专项行动纳入政策术语：煽情化表达、标题封面博眼球、要素不全、真假难辨、质量低下、公共价值缺失"],
+      ["与黄色新闻的关系","承袭 {19世纪末} 美国黄色新闻（[普利策]《纽约世界报》vs [赫斯特]《纽约新闻报》）的<em>煽情基因</em>，在算法推荐与流量逻辑下演化"],
+      ["评价","折射算法时代新闻专业主义被<em>流量逻辑</em>挤压的结构性困境；治理难点在算法机制与变现模式的深层捆绑"]
+    ], tip:"扣叔：这个词没有固定答案，随便编都可以——但「2024 年 4 月网信办专项行动」这个时间点和六个特征写上去，一眼就看出是背过的。" }
+  ]},
+  { t:"二、大众文化的文本研究", note:"扣叔标了「不考文化研究的直接忽略」——但深大考：2024 年 440 跨媒体叙事标注为「文化研究学派（基础知识）」，2021 年 334 网络游戏属媒体文化", entries:[
+    { id:"dzwh", n:"大众文化", tags:["必背","深大相关"], must:1, rows:[
+      ["两类界定","贬义的 <em>Mass Culture</em>——文化工业生产的标准化产品，政治与商业合谋的欺骗工具<sep>中性的 <em>Popular Culture</em>（通俗文化）——源自民间，为普通民众拥有享用",2],
+      ["五个特征","<em>商品性</em><sep><em>通俗性</em><sep><em>流行性</em><sep><em>娱乐性</em><sep><em>对大众传媒的依赖性</em>",5],
+      ["概念演变","Popular Culture → Kitsch（媚俗）→ Mass Culture → Culture Industry → Popular Culture"],
+      ["关键一句","没有大众传媒，也就没有大众文化——大众文化也是一种<em>传媒文化</em>"]
+    ]},
+    { id:"whyj4", n:"文化研究的四次范式转换", tags:["必背","框架"], must:1, rows:[
+      ["①「文化与文明」传统","[马修·阿诺德]、[艾略特]、[利维斯夫妇]；以文化对抗文明，主张人文优先——明显的<em>文化精英主义与文化保守主义</em>"],
+      ["②文化主义范式","[威廉斯] 等伯明翰学派；平民主义倾向，关注<em>中下层阶级及其通俗文化</em>；威廉斯把文化定义为「<em>一种整体生活方式</em>」"],
+      ["③结构主义范式","[罗兰·巴特]、[阿尔都塞]；把文化看作一套标记符号，认为<em>个体经验在很大程度上由意识形态结构决定</em>"],
+      ["④葛兰西转向与文化霸权","关键词是「<em>霸权</em>」；把大众文化视为<em>意识形态领导权争夺的场所</em>，比前两者更辩证"],
+      ["⑤后马克思主义与后结构主义","结构主义：结构固定普遍、语言中心、二元对立<sep>后结构主义：反中心、解构、差异性、权力与话语（[福柯]、[德里达]、[巴特勒]）"],
+      ["一句话","精英主义 → 平民生活方式 → 结构决定 → 霸权争夺 → 解构与话语"]
+    ]},
+    { id:"jieh", n:"霍尔的接合理论", tags:["必背","高频简答","20分"], must:1, rows:[
+      ["提出","[斯图亚特·霍尔]；从<em>葛兰西文化霸权</em>出发，吸收 [拉克劳] 与 [墨菲] 的 articulation 概念"],
+      ["核心概念 · 接合","在一定条件下使两个不同元素<em>成为一体</em>的连接形式——并非必然、决定性、绝对或本质性的"],
+      ["三个特征","<em>非必然性</em>——依特定社会历史条件临时形成<sep><em>动态性</em>——不断更新、颠覆或再接合<sep>社会形构的<em>未完成性</em>",3],
+      ["articulation 的双关","同时是「<em>表达</em>」与「<em>连接</em>」"],
+      ["三重意义","突破还原论与本质论<sep>在后殖民文学与文化身份研究中发挥关键作用<sep>鼓励<em>介入主义</em>策略",3]
+    ]},
+    { id:"fsk", n:"生产性受众观与生产者式文本", tags:["必背","建议记忆"], must:1, rows:[
+      ["提出","[费斯克]——沿伯明翰学派积极受众路径发展"],
+      ["核心","大众不是消极的文化消费者，而是积极的「<em>意义生产者</em>」"],
+      ["生产者式文本","媒介文本是<em>开放且多义</em>的；参考艾柯的开放／封闭文本、[罗兰·巴特] 的可读／可写文本——电视文本兼有可写文本的开放性与可读文本的易懂性"],
+      ["动力：快感","逃避规训的快感 ＋ 抵抗霸权的<em>冒犯式</em>快感",2],
+      ["微观政治抵抗","日常消费实践是一种「<em>符号学游击战</em>」——利用文化工业提供的资源，在微观层面规避、协商与抵抗主流意识形态"],
+      ["两种经济","财经经济中受众是商品<sep>文化经济中受众是<em>意义和快感的生产者</em>",2]
+    ]},
+    { id:"dlz", n:"文本盗猎者", tags:["配套"], rows:[
+      ["提出","[亨利·詹金斯]《文本盗猎者——电视粉丝与参与式文化》，借用 [德塞都] 的「盗猎者」概念"],
+      ["核心","粉丝是通俗文化的<em>盗猎者</em>——盗猎其他文化材料来创造自己的粉丝族群文化"],
+      ["两个论点","批判粉丝「头脑简单且痴迷成性」的<em>污名化</em>标签，论证其话语抵抗与主体性建构<sep>继承德赛都的「<em>游牧式</em>」读者观，把读者置于意义生产的<em>中心</em>",2]
+    ]},
+    { id:"rhwh", n:"参与式文化与融合文化", tags:["必背","5分名解"], must:1, rows:[
+      ["提出者","[亨利·詹金斯]"],
+      ["参与式文化","{1992}《文本盗猎者》首先提出——粉丝不满足于被动消费，<em>主动以参与性姿态融入传播过程</em>；粉丝圈相互连接，形成独立于主流之外的小众另类文化"],
+      ["融合文化","把参与式文化放到互联网语境下的扩展；当代媒介活动背后的文化逻辑——不同要素<em>以融合的方式互连共生</em>"],
+      ["融合发生在哪","传统内容供应者与具有强烈参与意识的<em>草根媒体</em>之间"],
+      ["文化场域","「新媒介与旧媒介碰撞、草根媒介和公司化大媒体相互交织、媒体制作人和媒体消费者的<em>权力相互作用</em>」"]
+    ]},
+    { id:"jgsh", n:"景观社会", tags:["必背","5分名解"], must:1, rows:[
+      ["提出","法国哲学家 [德波]"],
+      ["定义骨架","把视觉化、形象化的世界称为「景观社会」——[马克思] 所说的<em>商品社会</em>开始转变为<em>景观社会</em>"],
+      ["表现","所有生活都把自己表现为<em>景观的无限积累</em>；人与人的关系也以景观为媒介，鲜活的生活本身被转变为一种<em>表征</em>"],
+      ["本质","根本上仍是商品社会——景观是被重新组织到更高更抽象水平的<em>商品形式</em>"],
+      ["影响","日常生活<em>本真性的缺失与异化</em>占支配地位；受众在广泛的「娱乐」迷惑中沦为<em>景观的奴隶</em>"]
+    ]},
+    { id:"mtqg", n:"媒体奇观", tags:["配套"], rows:[
+      ["提出","[凯尔纳]　「媒体文化三部曲」第二部《媒体奇观——当代美国社会文化透视》"],
+      ["定义骨架","能体现当代社会<em>基本价值观</em>、引导个人适应现代生活方式，并将当代社会中的<em>冲突和解决方式戏剧化</em>的媒体文化现象"],
+      ["范围","媒体制造的各种豪华场面、体育赛事、政治事件"],
+      ["与德波的区别","带有鲜明的<em>主体性</em>——由媒体打造，为背后的政治势力或商业权力所<em>操控</em>，形成坚不可摧的文化霸权"]
+    ]}
+  ]}
+  ]
+},
+{
+  id:"C11", no:"第十一讲", stars:"★★★", pages:"p155–163",
+  title:"理解媒介：观念、特征与演进史",
+  jie:[
+  { t:"一、作为技术的媒介", entries:[
+    { id:"mjjs", n:"媒介技术", tags:["5分名解"], rows:[
+      ["定义骨架","也称传播技术——人类为驾驭信息传播、不断提高信息生产与传播效率所采用的<em>工具、手段、知识和操作技艺</em>的总称"],
+      ["要解决的问题","实践应用层面的<em>效率</em>问题：以最方便、最灵活、最快捷、最经济、最有效的手段提高信息生产与传播效率"],
+      ["内在逻辑","<em>技术理性</em>或<em>工具理性</em>"]
+    ]},
+    { id:"hate", n:"哈特的媒介系统三分类", tags:["边角料","《传播学教程》需记"], rows:[
+      ["提出者","美国传播学家 [哈特]"],
+      ["三类媒介系统","<em>示现</em>的媒介系统：面对面传递，由人体感官或器官本身执行（口语、表情、动作、眼神）<sep><em>再现</em>的媒介系统：传播者需要工具、接收者不需要（绘画、文字、印刷、摄影）<sep><em>机器</em>媒介系统：传播和接收双方都需要机器（电信、电话、唱片、电影、广播、电视、计算机通信）",3],
+      ["演进规律","三类依次<em>累积</em>出现——人体的信息功能日益向外扩展，<em>体外化信息系统</em>逐渐获得相对独立性"]
+    ], tip:"笔记给的年份和书名（1911 年《understanding the media》）看着像转录错误——那是麦克卢汉 1964 年那本书的名字。<b>答题只写「哈特把传播媒介分为三类」，别写年份和书名</b>。" },
+    { id:"yanjin", n:"人类传播演进的七个阶段", tags:["必背","20分简答","50分论述"], must:1, rows:[
+      ["① 符号和信号时代","身体语言（哭、笑、肢体）　约 {1400万年前}　人类传播的起点，与动物传播的根本差异"],
+      ["② 口语传播时代","口头语言　原始社会至文字出现　加速社会进化，但受限于空间和时间"],
+      ["③ 文字传播时代","甲骨文、象形文字　约 {公元前3000年}　突破口语局限，促进知识文化积累"],
+      ["④ 印刷传播时代","雕版、活字印刷　{公元7—15世纪}　提高信息生产效率，推动社会政治文化发展"],
+      ["⑤ 电子传播时代","电报、电话、广播、电视　{1837}（电报发明）　实现实时远距离传播"],
+      ["⑥ 网络传播时代","互联网、万维网　{20世纪80年代}　多媒体、全球性传播"],
+      ["⑦ 智能传播时代","人工智能、大数据、物联网　{21世纪}　人—物、人—机、虚—实连接共同推进"],
+      ["总趋势（论述骨架）","从<em>体内到体外</em>、从<em>单一到融合</em>、从<em>被动接收到智能交互</em>"],
+      ["论述四段","前文字时代：从本能反应到体外媒介的雏形<sep>文字与印刷：体外符号系统的确立与知识垄断的转移<sep>电子与网络：时空界限的消解与传播权力的重构<sep>智能传播：人机共生与传播范式的再定义",4],
+      ["智能传播四个变化","节点流动化<sep>人类自身成为媒介<sep>人机共生（AI 从工具变为传播主体）<sep>沉浸式叙事",4]
+    ], tip:"扣叔：只要线索标题准确，底下的内容可以灵活编。所以<b>七个阶段名＋四段论述标题</b>是硬指标，中间的展开可以现编。" }
+  ]},
+  { t:"二、媒介技术的社会影响 · 技术的道德观念", entries:[
+    { id:"sandaode", n:"三种技术道德观", tags:["必背","15分简答"], must:1, rows:[
+      ["出处","[梅塞尼]　{1970}　《技术与社会》"],
+      ["技术「善」论","技术是<em>一切进步的原动力</em>，能把人类带向理想社会；代表是欧洲思想史上的<em>合理主义与功利主义</em>"],
+      ["技术「恶」论","技术是<em>万恶之源</em>——夺走职业、隐私、民主权利，助长物质主义，最终污染自然、引向毁灭；代表是 [卢梭] 和批判技术资本剥削性的社会主义思想家"],
+      ["技术「中性」论","技术本身<em>无所谓善恶</em>，只是中性的工具和手段；使技术成为善或恶的，是<em>创造和使用技术的人</em>",3],
+      ["对中性论的反驳","[刘海龙]：「媒介虽然不具有善恶，但<em>并不中立</em>」——技术的社会属性、社会建构性、技术自主性都说明它非中立（算法追求效率却造成外卖员被系统剥削）"]
+    ]},
+    { id:"dzwtb", n:"电子乌托邦", tags:["必背","5分名解"], must:1, rows:[
+      ["定位","技术「善」论在传播领域的典型表现"],
+      ["定义骨架","过分理想化地认为新的电子媒介技术将<em>自动带来</em>一个自由、民主、平等的社会"],
+      ["逻辑","技术的<em>双向性和互动性</em>将颠覆传统传播模式，赋予每个人平等的发言权和参与机会"],
+      ["局限","忽略了技术背后的<em>社会结构和制度因素</em>——社会关系的平等不只取决于媒介的双向性，还受制度、文化、经济、政治影响"],
+      ["评价口径","它是<em>幼稚</em>的：技术进步提供的是可能性，理想社会还需要社会发展与人的素质提升"]
+    ]},
+    { id:"mjlgzy", n:"媒介乐观主义", tags:["配套"], rows:[
+      ["核心","认为大众传播媒介（报刊及后来的电子媒介）对社会进步和民主政治有关键推动作用"],
+      ["三位代表","[J.布莱士]：报刊使分散的个人意见结晶为<em>组织化的公众舆论</em><sep>[塔尔德]：报刊形成现代舆论主体——<em>公众</em><sep>[库利]：印刷媒介是<em>民主的同义词</em>",3],
+      ["评价","忽视了商业化、信息控制和舆论操纵等伴生问题"]
+    ]},
+    { id:"mjycz", n:"媒介依存症", tags:["必背","5分名解"], must:1, rows:[
+      ["定位","现代人的一种<em>社会病理现象</em>——技术「恶」论的经验证据"],
+      ["四个特点","过度沉湎于媒介接触而不能自拔<sep>价值和行为选择一切从媒介中寻找依据<sep>满足于与媒介中的虚拟社会互动而<em>回避现实社会互动</em><sep>孤独、自闭的社会性格",4],
+      ["五种表现","沙发土豆<sep>电视人<sep>容器人<sep>鼠标土豆<sep>网瘾症",5]
+    ]},
+    { id:"rqr", n:"容器人 · 电视人 · 充欲主义", tags:["必背","5分名解"], must:1, rows:[
+      ["容器人","[中野收]　{1980}　《现代人的信息行为》——内心世界类似<em>罐状容器</em>，孤立封闭；人际接触只是<em>容器外壁的碰撞</em>，保持距离成为最佳选择"],
+      ["容器人的表现","注重自我意志的自由，不认同任何外部强制和权威，但<em>很容易接受大众传播媒介的影响</em>"],
+      ["电视人","[林雄二郎]　{1973}　《信息化社会：硬件社会向软件社会的转变》——在电视的感官刺激下长大的「<em>感觉人</em>」，「跟着感觉走」，与印刷媒介环境中重理性、重逻辑的父辈形成对比"],
+      ["电视人的性格","收视环境封闭、缺乏现实互动 → 孤独、内向、以自我为中心，社会责任感较弱"],
+      ["充欲主义","[佐藤毅]　{1986}　《人的自律》——称之为「<em>他律性欲望主义</em>」：电视既是欲望追求的对象，又是<em>唤起和引发新欲望</em>的媒介"],
+      ["充欲主义的后果","价值观由勤劳、节俭、奉献转向个人主义的<em>享乐和「充欲」</em>"]
+    ]},
+    { id:"shatudou", n:"沙发土豆 · 鼠标土豆 · 网瘾症", tags:["配套"], dim:1, rows:[
+      ["沙发土豆","Couchpotato——拿着遥控器蜷在沙发上、跟着电视节目转的人；思想感情与媒介内容完全相连，极端自我内化"],
+      ["鼠标土豆","Mousepotato——网络时代的版本：过分依赖网络，失去对现实生活的兴趣"],
+      ["网瘾症五类","色情成瘾<sep>网络交际成瘾<sep>信息超载成瘾<sep>网络游戏成瘾<sep>网络视听成瘾",5]
+    ]},
+    { id:"yihua", n:"异化", tags:["配套"], rows:[
+      ["哲学定义","人类创造的产物（制度、技术、文化）<em>脱离主体控制</em>，成为压迫人性的异己力量"],
+      ["马克思主义","实质是私有制与社会分工固定化的产物；人的本质从「自由自觉的活动」沦为资本逻辑下的工具"],
+      ["传播语境","法兰克福学派：大众传媒通过标准化内容制造「<em>虚假需求</em>」，受众沦为文化工业的被动消费者"],
+      ["数字时代表现","算法把用户困于信息茧房<sep>社交平台的情感连接被异化为<em>表演劳动</em><sep>[鲍德里亚]：技术制造的「<em>超真实</em>」模糊虚实边界",3]
+    ]}
+  ]},
+  { t:"二、媒介技术的社会影响 · 技术与社会的相互关系", entries:[
+    { id:"jsjdl", n:"技术决定论 · 社会决定论 · 互动论", tags:["必背","框架"], must:1, rows:[
+      ["技术决定论","技术是<em>按自身逻辑发展的独立力量</em>，后果内在于技术而不取决于人的意志；人必须被动适应技术环境"],
+      ["技术决定论代表","[埃吕尔]、[麦克卢汉]、[温纳] 及法兰克福学派；技术「善」论与「恶」论都是它的拥护者"],
+      ["社会决定论","又称技术的<em>社会构建论</em>——技术起源于社会生活，产生于人特定的价值需求；<em>没有需求就不会有技术</em>（中国四大发明因社会制度制约未发展成工业技术）"],
+      ["技术与社会互动论","又称技术的<em>社会形成论</em>——技术和社会在不断<em>彼此影响</em>；代表 [贝尔纳]、[巴伯]、[梅塞尼]"],
+      ["结论口径","技术与社会是<em>共生共变的辩证统一体</em>：既非完全自主，也非绝对受控"]
+    ]},
+    { id:"kegx", n:"媒介可供性", tags:["前沿概念"], rows:[
+      ["定义骨架","媒介技术的特性或功能对用户行为产生的潜在影响——媒介为用户提供的<em>行动可能性</em>"],
+      ["源头","生态心理学家 [吉布森] 的 affordance 理论"],
+      ["核心","强调<em>技术属性与用户目标、需求之间的互动关系</em>：物理属性是基础，用户的主观感知和行为能力影响其理解和使用"],
+      ["例子","社交媒体的可供性包括自我展示、内容分享、环境互动——平台塑造社交类型，用户也会创造属于自己的规范"]
+    ]},
+    { id:"xunhua", n:"驯化理论", tags:["前沿概念"], rows:[
+      ["提出","英国学者 [西尔弗斯通]——最初来自家庭场景中电视媒体使用的研究"],
+      ["核心隐喻","把<em>生物驯化</em>嫁接到信息技术的私人使用之中"],
+      ["四个环节","<em>占用</em>（appropriation）：技术如何被引入具体社会场景<sep><em>客体化</em>（objectification）：新技术在场景中被置于何种位置<sep><em>纳入</em>（incorporation）：新技术如何嵌入生活实践<sep><em>转换</em>（conversion）：消费主体如何向他人展示新技术",4],
+      ["意义","体现「<em>物的社会生命</em>」——传媒的生命历程是技术商品、符号环境及特殊文本角色的转换过程"]
+    ]}
+  ]}
+  ]
+},
+{
+  id:"C12", no:"第十二讲", stars:"★★★★", pages:"p164–171",
+  title:"媒介环境学：英尼斯、麦克卢汉的徒子徒孙及其理论",
+  jie:[
+  { t:"一、研究问题与底层逻辑", entries:[
+    { id:"mjhjx", n:"媒介环境学派", tags:["必背","5分名解"], must:1, rows:[
+      ["定义骨架","把<em>环境当作媒介</em>来研究，认为技术、环境、媒介、文化是近义词甚至等值词；强调媒介对人体、人的心理和人类社会的重大影响"],
+      ["研究取向","从<em>传播技术</em>出发，探讨媒介与人类社会文化之间的相互关系；既有微观的媒介研究，也有宏观的文明演进研究"],
+      ["代表人物","[伊尼斯]、[麦克卢汉]、[波兹曼]、[洛根]、[莱文森]、[斯特拉特]、[林文刚]"],
+      ["核心主张","强调<em>媒介本身而非传播内容</em>的重要性；技术发挥着超越人们控制的影响力"],
+      ["气质","强烈的<em>人文关怀和道德关怀</em>，关心整个人类文化的健康与平衡"]
+    ]}
+  ]},
+  { t:"二、代表人物 · 私淑师徒：伊尼斯与麦克卢汉", entries:[
+    { id:"ynspx", n:"伊尼斯的媒介偏向论", tags:["必背","15分简答"], must:1, rows:[
+      ["提出者","加拿大经济学家、传播学家 [哈罗德·伊尼斯]（英尼斯）"],
+      ["核心命题","每一种传播媒介都具有<em>时间偏向</em>或<em>空间偏向</em>，这种偏向影响社会的知识状况、权力结构和政治形态",2],
+      ["空间偏向媒介","<em>灵便</em>的媒介——莎草纸、纸张，有利于空间上的拓展，常被用于<em>政权和领土扩张</em>"],
+      ["时间偏向媒介","<em>笨重耐久</em>的媒介——石刻文字、泥板文字，有助于<em>连续的文明</em>的发展"],
+      ["帝国与传播","一个成功的帝国必须同时解决<em>空间问题</em>（军事与政治）和<em>时间问题</em>（朝代、寿限与宗教）"],
+      ["局限","受时代所限，未能把媒介偏向的考察辐射到互联网"]
+    ]},
+    { id:"mjjxx", n:"媒介即讯息", tags:["必背","30分论述"], must:1, rows:[
+      ["出处","[麦克卢汉]　{1964}　《理解媒介：论人的延伸》"],
+      ["核心命题","媒介绝不仅仅是承载内容的——<em>媒介本身才是有意义的讯息</em>；人类有了某种媒介才可能从事与之相适应的传播和其他社会活动"],
+      ["「新尺度」","一种新媒介会带来新的<em>尺度、速度、模式与环境</em>——任何媒介的「讯息」是它引入人间事物的这些变化，<em>与其内容无关</em>",4],
+      ["一种媒介是另一种媒介的内容","电影的内容是小说、剧本或歌剧；文字或印刷的内容是言语——我们几乎意识不到媒介形式本身"],
+      ["媒介本身就是一种语法","它设定了世界运行的<em>规则与结构</em>；不同媒介塑造不同的感知方式与交往形态"],
+      ["媒介本身就是环境","媒介是我们感知世界的中介，且这种环境<em>具有隐蔽性</em>——人生活在媒介营造的环境中却浑然不觉，「就像鱼在水中游」"],
+      ["意义","开拓了<em>从媒介技术出发</em>观察人类社会发展的视角"]
+    ], tip:"扣叔：如果学校考简答就把内涵里的小标题都背了；如果只可能考名词解释，就只背【定义】和【内涵】那段。" },
+    { id:"rdys", n:"媒介是人的延伸", tags:["必背","20分简答"], must:1, rows:[
+      ["出处","[麦克卢汉]　{1964}　《理解媒介：人的延伸》"],
+      ["核心命题","一切媒介都是<em>人的延伸</em>——是器官、感官或功能的强化和放大"],
+      ["对应关系","文字和印刷＝<em>视觉</em>的延伸<sep>广播＝<em>听觉</em>的延伸<sep>电视＝视觉、听觉和触觉的<em>综合</em>延伸",3],
+      ["反向作用","每种媒介的使用又会<em>改变人的感觉平衡状态</em>，产生不同的心理作用和认识方式"],
+      ["三阶段","<em>部落化</em>（口语，感官平衡）→ <em>脱部落化</em>（文字印刷，视觉被过分偏重）→ <em>重新部落化</em>（电子媒介，在新水平上重归感官平衡）",3],
+      ["评价","是一种<em>思辨式的洞察</em>，不能代替实证科学的考察；他的「媒介」概念过于宽泛（道路、服装、货币、时钟、汽车都算），把一切社会关系还原为传播关系"]
+    ]},
+    { id:"lrmj", n:"冷媒介与热媒介", tags:["必背","考点"], must:1, rows:[
+      ["出处","[麦克卢汉]　{1964}　《理解媒介：论人的延伸》"],
+      ["热媒介","<em>高清晰度</em>地延伸人体某个感官——提供的信息多，不需要使用者运用想象，因而<em>抑制卷入</em>，参与度低"],
+      ["冷媒介","<em>低清晰度</em>——提供的信息少，需要使用者更多的感官参与和思维活动来<em>填补缺失的信息</em>，促进参与"],
+      ["三维对照","清晰度：热高／冷低<sep>信息量：热大／冷小<sep>参与程度：热低／冷高",3],
+      ["评价","冷热的划分是<em>从使用者的感觉</em>出发的，并不绝对，相当主观；但它启示后人：不同媒介作用于人的方式不同"]
+    ]},
+    { id:"dqc", n:"地球村", tags:["必背","5分名解","深大考过"], must:1, rows:[
+      ["提出者 · 年代","[麦克卢汉]　{20世纪60年代}"],
+      ["首次提出","{1962}《谷登堡星汉璀璨：印刷文明的诞生》；其后在《理解媒介：人的延伸》中进一步阐述"],
+      ["定义骨架","电力技术的「<em>内爆</em>」效应使地球缩小到了<em>村落</em>的规模"],
+      ["机制","电子媒介延伸了人们的<em>中枢神经系统</em>，使人重新体验部落文化中村庄式的接触交往——人类社会正经历新的「<em>重新部落化</em>」过程"],
+      ["恢复了什么","电视使人类脱离部落化以来长期失落的「<em>感觉总体</em>」和「<em>感官平衡</em>」得以重新恢复"],
+      ["反驳","[卡斯特尔]：「我们不是生活在一个『地球村』里，而是生活在全球化生产、地方化分配的顾客导向的<em>一座座村舍</em>中」"]
+    ], tip:"<b>深大 2024 年 440 简答原题</b>：「地球村理论是谁提出的，有什么意义」（10 分）。「意义」答两层：① 开拓了从媒介技术看社会的视角、重新部落化与感官平衡；② 结合互联网谈它今天的洞察力，再用卡斯特尔的「一座座村舍」收尾，就有了辩证。" },
+    { id:"sidinglv", n:"媒介四定律", tags:["拓展"], rows:[
+      ["出处","[麦克卢汉] 父子《媒介定律：新科学》"],
+      ["四种功能","<em>提升</em>：媒介使我们的身体得到延伸<sep><em>过时</em>：新媒介使某些旧媒介和生活方式被淘汰<sep><em>复活</em>（再现）：过时的东西又以新方式出现，如电子媒介使口语复活<sep><em>逆转</em>：物极必反，新形式推向极限后特征发生逆转，如互联网的开放性最终逆转为新的封闭",4],
+      ["金句","「每一种省力的设备都是乔装打扮的更新更重的工作形态。」"]
+    ]}
+  ]},
+  { t:"二、代表人物 · 后麦克卢汉时代的媒介环境学", entries:[
+    { id:"tnxs", n:"童年的消逝", tags:["必背","5分名解"], must:1, rows:[
+      ["提出","[尼尔·波兹曼]　{1982}　同名著作"],
+      ["定义骨架","电子媒介（尤其是电视）通过<em>无差别传播成人信息</em>，消解了印刷时代建构的「童年」与「成年」的文化界限"],
+      ["前提论断","儿童是<em>一个不知道成人所知道的某些信息的群体</em>——童年的存在依赖于成人对信息的垄断"],
+      ["三段历史","中世纪没有童年（没有信息区隔手段）→ {15世纪中期} 谷登堡印刷机创造了这种手段 → {19世纪中期}以后电子媒介打破知识垄断，童年消逝",3],
+      ["对策","用<em>教育</em>对抗和消弭电视技术对儿童的不良影响"]
+    ]},
+    { id:"ylzs", n:"娱乐至死", tags:["必背","5分名解"], must:1, rows:[
+      ["提出","[尼尔·波兹曼]　{1985}　同名著作（Amusing Ourselves to Death）"],
+      ["定义骨架","电视媒介通过其<em>娱乐本性</em>侵蚀公共话语的严肃性，使政治、宗教、新闻、教育逐渐沦为<em>娱乐的附庸</em>"],
+      ["核心论断","某个文化中<em>交流的媒介</em>，对这个文化的精神重心和物质重心的形成有决定性影响；电视的精神重心就是<em>娱乐</em>"],
+      ["例子","政治作为表现才干的领域，从<em>智慧</em>变成了<em>化妆术</em>"],
+      ["金句","「真正可怕的，不是人们被剥夺信息、剥夺自由，而是人们<em>自动在享乐之中放弃自由</em>，渐渐爱上压迫。」"]
+    ]},
+    { id:"mjjyy", n:"媒介即隐喻", tags:["必背","5分名解","理解"], must:1, rows:[
+      ["出处","[波兹曼]《娱乐至死》"],
+      ["定义骨架","媒介并非单纯的信息载体，而是一种<em>隐喻</em>——以隐蔽但有力的暗示来<em>定义世界</em>；人生存在媒介制造的巨大隐喻世界中而不自知"],
+      ["与麦克卢汉的关系","是对「<em>媒介即讯息</em>」的<em>注解和修正</em>——为避免「媒介」与「讯息」意义混淆而改称「隐喻」"],
+      ["五种偏向","一切媒介都有隐而不显的偏向：思想情绪、政治、感知、社会、内容",5],
+      ["评价","指出了媒介的强大暗示能力；但过度强调媒介的<em>单向决定作用</em>，忽视受众能动性，带有精英主义色彩"]
+    ]},
+    { id:"mjqjl", n:"媒介情境论", tags:["必背","15分简答"], must:1, rows:[
+      ["提出","[约书亚·梅洛维茨]《消失的地域：电子媒介对社会行为的影响》（他至今唯一的著作）"],
+      ["理论来源","[戈夫曼] 的<em>拟剧理论</em> ＋ [麦克卢汉] 的媒介理论",2],
+      ["核心命题","电子媒介通过<em>改变人类的地理环境</em>对社会行为产生冲击——新的信息传播系统改变<em>社会交往场景</em>，从而引起社会行为的变化"],
+      ["理论贡献","在感觉变化与行为改变之间找到了「<em>交往场景</em>」这一<em>中介变量</em>，矫正了早期媒介环境学线性、直接的因果关系"]
+    ]},
+    { id:"lwsjh", n:"莱文森：补救性媒介与人性化趋势", tags:["必背","15分简答"], must:1, rows:[
+      ["媒介进化论","[保罗·莱文森]：技术是人类为生存而选择保留的最符合需求的东西；媒介进化是系统内的<em>自调节和自组织</em>"],
+      ["补救性媒介","出自《人类历程回顾：媒介进化理论》——<em>每一种媒介都是对前一种媒介乃至过去很多媒介的补救</em>"],
+      ["补救链条","广播补救报纸 → 电视补救广播 → 互联网是「<em>所有补救性媒介的补救媒介</em>」"],
+      ["人性化趋势进化论","出自《人类历史回放》——媒介的更迭让<em>更多感官参与</em>，接受门槛不断降低，媒介在进化中变得更加人性化"],
+      ["核心论断","<em>人是媒介的环境</em>，媒介必须适应人这一环境才能生存；人类理性的力量控制着媒介进化的方向"],
+      ["但书","媒介技术在发展中也可能偏离人的理性控制，出现「<em>意外的结果</em>」"]
+    ], tip:"莱文森被称为「数字时代的麦克卢汉」，他的两条理论正好是对技术决定论的<b>反向修正</b>——麦克卢汉说媒介塑造人，莱文森说人选择媒介。答技术与社会关系的题时，这组对照很好用。" }
+  ]}
+  ]
+},
+{
+  id:"C13", no:"第十三讲", stars:"★★★★", pages:"p172–181",
+  title:"从受众到用户：受众的概念、特征与观念演进",
+  jie:[
+  { t:"一、受众观及其变化", note:"@我们喆：★★★★★，最重要的是作为大众、群体、市场、商品的受众", entries:[
+    { id:"dz", n:"作为大众的受众", tags:["★★★★★","必背","最常考"], must:1, rows:[
+      ["时期","{20世纪20—40年代}，大众社会理论视角——受众研究的开端"],
+      ["定义骨架","大批无根的、原子化的、同质化的、孤立的、分散的、容易受到暗示的「<em>大众</em>」（mass）或乌合之众（mess），只能被动接受权力精英的操纵；像中弹的「靶子」一样应声倒地"],
+      ["本质","「大众」不只是量的概念，更是<em>质</em>的概念——群体结构松散、构成者素质低下；受众本质上是<em>被动</em>的社会存在"],
+      ["对应效果论","魔弹论"],
+      ["例子","{1938} 哥伦比亚广播公司「火星人入侵」广播剧，超百万人感到恐惧"],
+      ["转变","{1944} [拉扎斯菲尔德]「既有政治倾向」假说与「两级传播」<sep>{1964} [鲍尔]「<em>顽固的受众</em>」"],
+      ["七个特点（[布鲁默] {1947}）","规模巨大性（多）<sep>异质性（杂）<sep>分散性（散）<sep>匿名性（匿）<sep>流动性（动）<sep>无组织性（组）<sep>同质性（同）",7],
+      ["口诀","<em>多 · 杂 · 散 · 匿 · 动 · 组 · 同</em>"],
+      ["答题逻辑（我们喆）","被动 → 一击即倒 → 火星人入侵 → 顽固的受众 → 多杂散匿动组同 → 否定主动性 → 过分夸大媒介力量"]
+    ], tip:"火星人入侵、既有政治倾向、两级传播都在你背过的<b>传播效果骨架卡</b>里（第十五、十六讲）——这里只需要记住它们是「大众受众观」被推翻的证据。" },
+    { id:"qt", n:"作为群体的受众", tags:["★★★","必背"], must:1, rows:[
+      ["背景","对「作为大众的受众」的<em>反驳</em>"],
+      ["核心","受众分属不同社会集团或群体；接触媒介受<em>群体归属关系、群体利益、群体规范</em>的制约；不同文化社群对同一事件诠释不同"],
+      ["主要研究","{20世纪三四十年代} [拉扎斯菲尔德] 等人的实证研究"],
+      ["两类群体背景","<em>人口统计学</em>意义的群体（性别、年龄、籍贯、民族、职业、学历）<sep><em>社会关系</em>意义上的群体（家庭、单位、团体、阶层、宗教信仰群体）",2],
+      ["答题逻辑","受群体压力与规范影响 → 两级传播、意见领袖 → 两类群体背景"]
+    ], tip:"我们喆：考得少，但它是对「大众」的直接质疑，而且新媒体时代的<b>圈层</b>很重要，所以要记。" },
+    { id:"sc", n:"作为消费者的受众：受众即市场", tags:["★★★★★","必背","5分名解"], must:1, rows:[
+      ["出现","{19世纪30年代}以后，大众传媒转向企业经营形态"],
+      ["定义（[麦奎尔]）","特定的媒体或讯息所指向的、具有特定的社会经济侧面像的、<em>潜在的消费者的集合体</em>"],
+      ["视角对比","作为大众＝文化精英的角度<sep>作为消费者＝<em>商业经营者</em>的角度"],
+      ["三个核心观点","大众传媒是<em>经营组织</em>，产品须以商品交换形式卖出去<sep>产品须有使用价值或交换价值，满足<em>消费者需求</em><sep>传媒之间必然有激烈<em>竞争</em>，争夺的是作为消费者的受众",3],
+      ["积极评价","反映了传媒活动的经营性、商品性和竞争性"],
+      ["四条消极评价","复杂的传播关系被简化成「卖方—买方」<sep>只看与购买力相关的人口统计学属性，看不到深层社会关系和意识形态<sep>容易把收视率、发行量当唯一标准，公益性与社会效益靠后<sep>没有从受众立场出发——受众还是公共事务的参与者、传播权利的主体",4],
+      ["答题逻辑","消费者—需求 / 经营组织—销售 / 市场—竞争"]
+    ]},
+    { id:"fz", n:"分众理论", tags:["★★★★★节内"], rows:[
+      ["演进","大众 → 分众 → 小众 → 个性化（利基市场、长尾）"],
+      ["时间点","{20世纪80年代}以前，多数传媒把受众看作未分化的「大众」市场"],
+      ["定义骨架","受众不是同质孤立个人的集合，而是具备<em>社会多样性</em>的人群——人口统计学、社会群体归属、心理特征上都有差异"],
+      ["四条核心内容","社会结构多样，是多元利益的复合体<sep>社会成员分属不同群体，态度行为受群体属性制约<sep>不同群体的受众对大众传播的需求和反应不同<sep>受众并非完全被动，在接触、选择、理解上有自主性和能动性",4],
+      ["例子","抖音按统计学特征、消费水平、生活方式划分「八大人群」；协同过滤推荐算法"]
+    ]},
+    { id:"sp", n:"作为商品的受众：受众商品论", tags:["★★★★★","必背","5分名解"], must:1, rows:[
+      ["提出者","传播政治经济学学者 [斯密塞]（斯麦兹）"],
+      ["年份 · 论文","{1977}　《传播：西方马克思主义的盲点》"],
+      ["回答的问题","广告商出资购买的商品是什么？——<em>受众的注意力</em>（受众力 audience power）"],
+      ["比喻","小酒馆为吸引顾客饮酒提供的「<em>免费午餐</em>」"],
+      ["过程","媒介公司<em>生产受众</em> → 打包移交给<em>广告商</em>"],
+      ["两条积极评价","揭示受众作为「隐性劳动者」被剥削，开启受众研究的<em>政治经济学视角</em><sep>补上 5W 里缺失的<em>广告商</em>：广告商—媒介—受众",2],
+      ["消极评价","把受众物化为商品，忽略受众的主观能动性与反抗"],
+      ["答题逻辑","斯密塞 → 内容免费吸引注意力 → 作为商品打包 → 卖给广告商"]
+    ]},
+    { id:"rm", n:"作为人民的受众", tags:["★★★","偶尔考"], rows:[
+      ["定位","社会主义国家关于受众的经典话语（与西方的「大众」相对）"],
+      ["核心","人民是社会的主人，传播为人民服务；既重经济效益，更重社会公共效益"],
+      ["双重角色","既是<em>服务对象</em>，又是<em>教育对象</em>"],
+      ["口径","坚持<em>党性和人民性的统一</em>"],
+      ["答题逻辑","主观能动 / 为人民服务 / 革命话语"]
+    ]},
+    { id:"cxz", n:"作为生产者的受众：产消者", tags:["★★★","人名要记"], rows:[
+      ["先声","{1972} [麦克卢汉]：消费者会通过电子技术演变为生产者"],
+      ["提出","{1980} [托夫勒]《第三次浪潮》——<em>prosumer「产消者」</em>取代 audience；趋势称「产消合一」（prosumption）"],
+      ["发展","[艾里克斯·布朗兹]（Alex Bruns）→ <em>produser「产用者」</em>（produce＋user）"],
+      ["两种生产","作为「生产者」<em>创作内容</em><sep>作为「消费者」<em>生产用户数据</em>（→ 政治经济学意义上的数字劳工）",2]
+    ]},
+    { id:"szlg", n:"作为「数字劳工」的受众", tags:["★★★"], rows:[
+      ["定位","受众商品论在<em>新媒体时代的延伸</em>——更隐蔽的剥削"],
+      ["定义骨架","用户通过数据生产、内容创作、社交互动为资本提供劳动价值，却<em>未获得相应或足够报酬</em>"],
+      ["被纳入资本的私人领域","文化知识<sep>闲暇时间<sep>社会关系<sep>兴趣爱好",4],
+      ["两类劳工","互联网信息生产者（内容管理员、主播、网络写手、游戏「<em>玩工</em>」、水军、粉丝打投）<sep>日益劳工化的普通用户（闲暇观看、转发、评论，在「合意」遮蔽下上传隐私数据）",2],
+      ["本质","媒介使用时间就是<em>劳动时间</em>"]
+    ], tip:"<b>深大关联</b>：2021 年 334 论述「结合传播学相关理论，谈谈对网络游戏的认识」（50 分）。这里的「玩工」就是现成的切入口，配上产消者、使用与满足一起用。" },
+    { id:"gz", n:"作为公众的受众", tags:["★★","考得少"], dim:1, rows:[
+      ["概念源头","[卢梭]：公众是民主政治的基础"],
+      ["哈贝马斯","「<em>公共领域</em>」中的公众——有交流理性、尊重不同意见、能相互理解的理性人"],
+      ["三个特征","理性与批判性<sep>身份平等性<sep>公共参与性",3],
+      ["例子","18、19 世纪的<em>咖啡馆</em>"],
+      ["评价","交流的乌托邦难以实现，但为大众传播设立了理想"]
+    ]},
+    { id:"sl4", n:"受众观在新媒体环境下的四条演变线", tags:["必背","20分简答","30分论述"], must:1, rows:[
+      ["四条线","从「<em>魔弹论</em>」到「<em>使用与满足</em>」：被动受众观的消解<sep>从「<em>群体的受众</em>」到「<em>数据化社群</em>」：分众理论的迭代<sep>从「<em>受众即市场</em>」到「<em>产消者</em>」崛起：用户角色的融合<sep>从「<em>受众商品论</em>」到「<em>数字劳工</em>」：更为隐蔽的剥削",4],
+      ["结构","大众 → 群体 → 市场 → 商品，每一种都往新媒体推一步"],
+      ["20 分简答版","「简述几种主要的受众观」——写大众、群体、市场、商品四种即可"],
+      ["30 分论述版","「试论述几种受众观在新媒体环境下的变化」——就是这四条线"]
+    ], tip:"第一条线用到的「使用与满足」在传播效果骨架卡第十七讲——深大 2025 年 440 刚考过「使用与满足＋社交媒体算法」。" }
+  ]},
+  { t:"二、受众的基本权利", note:"@我们喆：★★★，内容简单，直接记口诀", entries:[
+    { id:"ql", n:"受众的七项基本权利", tags:["★★★"], rows:[
+      ["口诀","<em>知 · 参 · 讨 · 近 · 隐 · 监 · 忘</em>",7],
+      ["知晓权","广义＝获得环境变化信息，属生存权；狭义＝对立法、司法、行政机构活动的知情权；{2019.4} 修订《政府信息公开条例》"],
+      ["参与权／传播权／表达权","传统称表现自由或言论自由；5G 让受众成为产消者，得到革命性释放"],
+      ["讨论权","对社会问题发表、交流意见；{2022.1} 发布《互联网信息服务算法推荐管理规定》，{3.1} 施行"],
+      ["媒介接近权","[巴隆] {1967} 首次提出；核心是<em>传媒必须向受众开放</em>"],
+      ["隐私权","{2021.8.20} 通过《个人信息保护法》，{2021.11.1} 施行——我国第一部系统保护个人信息的专门法律"],
+      ["监督权","监督媒介本身的运作 + 借助媒介行使舆论监督"],
+      ["被遗忘权","{2012} 欧盟定义，又称「删除的权利」；{2018.5}《通用数据保护条例》；我国暂无专门法规，《网络安全法》第四十三条规定了删除权"]
+    ]}
+  ]},
+  { t:"三、受众的角色变迁：从「受众」到「用户」", note:"@我们喆：★★★★★大考点，基础阶段不用背很多，专题时深背", entries:[
+    { id:"yh", n:"受众 vs 用户", tags:["★★★★★","必背"], must:1, rows:[
+      ["定义","受众＝大众传媒的信息接受者<sep>用户＝网络社会中的网络使用者"],
+      ["共同点","数量多、广泛复杂、分散性、隐匿性、素养参差性"],
+      ["角色","有限选择性的信息接受者 → 技术赋能下的「<em>产消者</em>」（生产者、消费者、参与者）"],
+      ["主体性","被动接收、有限选择、话语权低 → 主动生产、自主选择、话语权高"],
+      ["互动性","传播后反馈、慢 → 即时交互、快"],
+      ["精准度","大众 → 圈层化、分众化、个性化"],
+      ["四个「化」","单向被动 → <em>节点化</em><sep>数据使用少 → <em>数据化</em><sep>媒介依赖低 → <em>媒介化</em><sep>可穿戴设备少 → <em>赛博格化</em>",4],
+      ["传播模式","单向线性、以传者为主 → 节点化网状交互传播"],
+      ["商业模式","大众媒体一对多、<em>二次售卖</em> → <em>长尾理论</em>利基市场下的精准传播与营销"],
+      ["用户的三类需求","内容需求<sep>关系需求<sep>服务需求",3]
+    ], tip:"「用户的三类需求」就是高频题库「简述新闻生产中如何体现用户思维」（30 分）的三段骨架：锚定内容需求、呼应关系需求、适配服务需求。" }
+  ]}
+  ]
+},
+{
+  id:"C14", no:"第十四讲", stars:"★★★★", pages:"p182–185",
+  title:"受众研究与媒介素养研究的理论与范式",
+  jie:[
+  { t:"受众研究的发展脉络", note:"笔记 p183 表格 ＋ 高频题库补充", entries:[
+    { id:"ml", n:"受众研究的历史脉络", tags:["框架"], rows:[
+      ["古希腊罗马","城邦剧院、竞技场里的观众 audience——集体的、仪式性的"],
+      ["大众媒介兴起","从公共场合阅听转为<em>私人领域</em>的收听收看"],
+      ["一二战期间","实用主义、功能主义研究受众态度改变；受众成为独立研究领域"],
+      ["{20世纪30年代}","法兰克福学派「<em>消极的受众观</em>」；[马尔库塞]「单向度的人」"],
+      ["{40—70年代}","经验学派：[拉扎斯菲尔德] 选择性接触、中介因素 → [克拉珀] {1960} 三种选择性心理 → [德弗勒] {1975} 四种受众理论"],
+      ["{50年代}起","文化研究学派：[霍尔] 编码/解码，转向以受众为中心，{70年代}「<em>积极的受众</em>」流行；[费斯克]「两种经济」"],
+      ["{80年代}","[托夫勒] {1980} 产消者；[布朗兹] 产用者"],
+      ["互联网时代","[麦奎尔] 的六种新角色：搜寻者<sep>咨询者<sep>浏览者<sep>反馈者<sep>对话者<sep>交谈者",6],
+      ["一句话","法兰克福「消极」→ 经验学派「中介」→ 文化研究「积极」→ 产消者 → 用户（但资本剥削仍以隐蔽方式存在）"]
+    ]},
+    { id:"hr", n:"霍尔：编码/解码", tags:["必背","20分简答"], must:1, rows:[
+      ["论文 · 年份","[斯图亚特·霍尔] {1973}《电视话语中的编码和解码》"],
+      ["受众观","受众主动、积极，但<em>不完全自主</em>——受社会地位、意识形态框架等结构性因素制约"],
+      ["编码 / 解码","传播者把讯息转成代码（encoding）；接受者按规则解读（decoding）——意义的编解码就是意识形态的争夺与协商"],
+      ["三种解码","<em>偏好式</em>解读（preferred，又称主导—霸权式）：在编码的主导框架内理解<sep><em>妥协式</em>解读（negotiated，协商式）：部分认可、部分按自己的背景理解<sep><em>对抗式</em>解读（oppositional）：读懂了主导意义，却选择完全相反的方式解码",3],
+      ["本质","支配、妥协与反抗的关系——「意义空间中的阶级斗争」"],
+      ["评价","确立了接受者的主体地位；但更多站在编码者一侧，没看到受众可能根本不想解码——完成这一转向的是他的学生 [莫利]"],
+      ["费斯克「两种经济」","<em>财经经济</em>：受众是卖给广告商的商品<sep><em>文化经济</em>：受众是意义和快感的生产者",2]
+    ]},
+    { id:"whgy", n:"文化工业论", tags:["15分简答","第十讲详背"], rows:[
+      ["提出","[阿多诺] & [霍克海默]　{20世纪40年代}《启蒙辩证法》"],
+      ["核心","资本主义的工业化、标准化、商品化蔓延到文化领域"],
+      ["三个特征","标准化<sep>商品化<sep>伪个性化",3],
+      ["比喻","「自上而下整合消费者的<em>社会水泥</em>」"],
+      ["代表的受众观","法兰克福学派<em>消极的受众观</em>"],
+      ["评价","对资本主义文化逻辑的有力批判；但过度贬低大众文化的创造性，忽视受众主动性"]
+    ]},
+    { id:"rzsd", n:"认知失调论", tags:["5分名解","见骨架卡"], rows:[
+      ["提出","[费斯廷格] {1957}"],
+      ["核心","同时持有两种以上不一致的认知 → 精神紧张（失调感）→ 改变认知或行为以恢复协调"],
+      ["两条途径","自我辩解<sep>态度转变",2],
+      ["与受众研究的关系","主动回避会加剧失调的信息 → <em>选择性接触、选择性注意</em>"],
+      ["拓展","出于猎奇、审丑心态，人未必回避所有相反信息"]
+    ], tip:"传播效果骨架卡第十六讲「一致论四家」里也有费斯廷格，那边没写年份——这里补上 <b>1957</b>。" }
+  ]},
+  { t:"一、受众研究的四种理论", note:"@我们喆：★★，考得很少，主要记住四个分别是什么", entries:[
+    { id:"dfl", n:"德弗勒的四种受众理论", tags:["★★","必背","深大考过"], must:1, rows:[
+      ["提出","[德弗勒] {1975}《大众传播理论》——从个体心理到社会结构"],
+      ["四种理论","<em>个人差异论</em>（个人心理角度）<sep><em>社会分化论</em>（社会学群体角度）<sep><em>社会关系论</em>（群体规范压力角度）<sep><em>文化规范论</em>（媒介内容对文化价值观的加强与改变）",4],
+      ["个人差异论","源于 {20世纪40年代} [霍夫兰] 的心理实验；贡献＝提出「选择性注意和选择性理解」"],
+      ["社会分化论","又称社会类别论、社会范畴论；[赖利夫妇] {1959}《大众传播与社会系统》首先提出；按人口学特征分群，同群反应类似"],
+      ["社会关系论","[拉扎斯菲尔德]、[贝雷尔森]、[卡茨]；核心是两级传播、意见领袖、群体规范与群体压力"],
+      ["文化规范论","强调<em>间接和长期</em>效果；与议程设置、培养理论有联系"]
+    ], tip:"<b>深大关联</b>：2021 年 334「疫情期间不同国家民众收到的疫情信息不同，请分析各国受众认知差异的原因，要求从三个方面论述」（30 分）。四理论里挑三个——个人差异、社会分化、文化规范——就能直接当三段骨架。" }
+  ]},
+  { t:"二、媒介素养", note:"@我们喆：★★★★ 重点内容", entries:[
+    { id:"mjsy", n:"媒介素养", tags:["★★★★","必背","5分名解","深大考过"], must:1, rows:[
+      ["定义","普通公众使用媒介进行<em>获取、分析、衡量、批判和传播</em>媒介讯息的能力（新闻学与传播学名词审定委员会 {2018}）"],
+      ["六方面能力","媒介技术的基础技能<sep>媒介信息的识读能力<sep>查询收集能力<sep>选择能力<sep>质疑和批判能力<sep>加工制作和发布能力",6],
+      ["三类归并","技术使用与信息获取<sep>批判解读<sep>制作发布",3],
+      ["本土化","{2021年11月} 中央网信委《提升全民数字素养与技能行动纲要》"],
+      ["主体扩展","从普通公众 → 政府机构与官员、传媒从业者"],
+      ["答题逻辑","媒介技术使用 / 信息的获取、批判、制作发布"]
+    ], tip:"<b>深大关联</b>：2023 年 440 简答「请阐释『智能媒介素养』的概念，以及提升全民智能媒介素养的策略」（10 分）。概念＝本条定义＋人机协同；策略＝下面的「新媒体时代三种素养」。" },
+    { id:"mjsy3", n:"媒介素养教育的三个阶段", tags:["★★★★","必背"], must:1, rows:[
+      ["保护主义","protectionism　{20世纪初—60年代}：提高<em>信息免疫力</em>，保护青少年；说教灌输，鄙视大众文化、推崇精英文化"],
+      ["注重辨识能力","discrimination　{60—80年代}：受 [李普曼]「拟态环境」影响，区分媒介「现实」与真实世界；「<em>屏幕理论</em>」关注媒介形式；文本分析、鉴别式教学"],
+      ["能动赋权","empowerment　{80年代}以后至今：培养信息社会合格的「<em>公众</em>」，参与和使用媒介以实现自身发展"],
+      ["记忆钩子","<em>防</em>（免疫）→ <em>辨</em>（批判）→ <em>用</em>（赋权）"]
+    ]},
+    { id:"mjsy-new", n:"新媒体时代受众应具备的媒介素养", tags:["必背","30分论述"], must:1, rows:[
+      ["三种素养","<em>媒介使用与人机协同</em>素养（含摆脱依赖的「媒介戒断素养」）<sep><em>信息消费与内容批判</em>素养（含算法素养）<sep><em>内容生产与跨媒介叙事</em>素养（伦理与版权意识，对 AIGC 内容负主体责任）",3],
+      ["对应关系","正好对上定义的三类：使用 · 批判 · 生产"],
+      ["考法","媒介素养是什么？研究经历了哪几个阶段？新媒体时代受众应具备哪些媒介素养？（30 分）"]
+    ]}
+  ]}
+  ]
+},
+{
+  id:"C15", no:"第十五讲", stars:"★★", pages:"p186–196",
+  title:"传播效果研究的认识与发展：从魔弹论到强效果",
+  jie:[
+  { t:"一、传播效果的内涵与层次", entries:[
+    { id:"xg", n:"传播效果", tags:["必背","5分名解","15分简答","上次失分"], must:1, rows:[
+      ["定义骨架","传播者发出的信息 → 经媒介 → 传至受众 → 引起受众<em>思想观念、行为方式</em>等的变化"],
+      ["两种内涵","<em>微观</em>：意图实现效果（宣传、劝说在受传者身上引起的变化）<sep><em>宏观</em>：综合社会影响（无论有意与否、直接或间接）",2],
+      ["研究特征","着重考察受众，力图把影响追溯到媒介的某个层面，用实证科学的方法和语言检验假设"],
+      ["三个层面","<em>认知</em> → <em>态度·情感</em> → <em>行为</em>（效果的累积、深化和扩大）",3],
+      ["三种社会效果","<em>环境认知</em>效果<sep><em>价值形成与维护</em>效果<sep><em>社会行为示范</em>效果",3],
+      ["对应别名","环境认知＝「<em>视野制约效果</em>」<sep>社会行为示范＝拉扎斯菲尔德的「<em>社会地位赋予</em>」功能"],
+      ["行为效果三形态","对抗行为的消除<sep>合作行为的引起<sep>两者的相互转化",3]
+    ]},
+    { id:"mkr", n:"麦奎尔的媒介效果类型图", tags:["会考"], rows:[
+      ["出处","[麦奎尔]《大众传播理论》"],
+      ["模式来源","英国学者 [戈尔丁]"],
+      ["两轴","横轴＝时间性（短期／长期）<sep>纵轴＝意图性（有意图／潜移默化）",2],
+      ["四类型","有意图的短期效果<sep>无意图的短期效果<sep>无意图的长期效果<sep>有意图的长期效果",4],
+      ["有意图 · 短期","宣传、个人反应、媒介宣传、新闻学习、框架、议程设置"],
+      ["无意图 · 短期","个人反应、集体反应、媒介「暴力」"],
+      ["无意图 · 长期","社会控制、社会化、现实的定义、制度性变化"],
+      ["有意图 · 长期","发展性传播、创新的扩散、知识的传播"]
+    ]}
+  ]},
+  { t:"二、传播效果的「祛魅」层次：从魔弹论到强效果", entries:[
+    { id:"jd", n:"效果研究的阶段划分", tags:["必背","15分简答","上次失分"], must:1, rows:[
+      ["三阶段（1977）","[E.卡茨] 首次归纳比较",3],
+      ["三阶段分期","媒介万能 {1935–1955}<sep>有限效果 {1956–1960}<sep>效果相当强 {1960–1977}"],
+      ["四阶段（1981）","[W.赛弗林] & [J.坦卡德]",4],
+      ["四阶段分期","魔弹论 {1920–1940初}<sep>有限效果论 {1940初–60年代中期}<sep>适度效果论<sep>强大效果论"],
+      ["分水岭","以 {20世纪70年代中期} 为界，把「重归强效果」再分为适度、强大两期"]
+    ]},
+    { id:"lcb", n:"传播效果研究的 14 座里程碑", tags:["不咋考"], dim:1, rows:[
+      ["归纳者","[洛厄里] & [德弗勒]"],
+      ["时段","{20世纪20年代 – 80年代初}"],
+      ["能点出即可","佩恩基金电影研究<sep>火星人入侵<sep>伊里调查<sep>昼间广播剧听众研究<sep>玉米良种推广<sep>霍夫兰战时电影实验<sep>耶鲁项目<sep>《个人影响》<sep>里维尔项目<sep>施拉姆电视与儿童<sep>议程设置研究<sep>格伯纳媒介暴力研究<sep>《军医署长报告》{1969–1973}<sep>第二次《军医署长报告》{1982}",14]
+    ]},
+    { id:"pe", n:"佩恩基金研究", tags:["不咋考"], dim:1, rows:[
+      ["年份 · 主题","{1929–1933}　电影对儿童的影响（生理、认知、情绪、态度、行为）"],
+      ["结论数","{13} 项"],
+      ["学派 · 局限","芝加哥学派贡献突出；缺控制组、抽样失当"]
+    ]},
+    { id:"hxr", n:"火星人入侵地球", tags:["记200字","5分名解"], rows:[
+      ["时间 · 电台","{1938年10月30日}　哥伦比亚广播公司（CBS）"],
+      ["主持研究","心理学家 [坎特里尔]"],
+      ["数字","{600万} 听众<sep>约 {170万} 误认为真实新闻<sep>{100万} 受惊吓"],
+      ["三个决定因素","人格特质（不安全感、宿命论）<sep>批判能力高低<sep>收听情境",3],
+      ["理论贡献","突破「刺激—反应」模式，开创<em>选择性影响理论</em>"]
+    ]},
+    { id:"mdl", n:"魔弹论", tags:["考纲","必背","5分名解","上次失分"], must:1, rows:[
+      ["三别称","子弹论（枪弹论）<sep>皮下注射论<sep>刺激—反应论",3],
+      ["时期","一战后普遍存在于欧美，二战后逐渐式微"],
+      ["三背景","大众传播媒介的冲击力<sep>战争、政治及商业宣传的动员力<sep>大众社会理论 ＋ 行为主义心理学",3],
+      ["四内容","每人收到的信息几乎相同<sep>刺激强烈影响情感情绪<sep>反应大体一致<sep>不再受习俗传统等社会控制约束",4],
+      ["评价","夸大媒介影响力，忽视受众自主权和各种社会因素"],
+      ["动摇它的研究","佩恩基金、坎特里尔 {1938}、拉扎斯菲尔德信息流程、霍夫兰劝服研究"]
+    ]},
+    { id:"yxxg", n:"有限效果论", tags:["考纲","必背","5分名解"], must:1, rows:[
+      ["时段","{20世纪40年代初 – 60年代初}"],
+      ["四个基本观点","效果并不强大、受多种因素限制<sep>主要是<em>强化</em>原有立场而非改变<sep>因人而异、因情况而异<sep>通过中介因素和环节起作用",4],
+      ["两个学派","哥伦比亚学派（[拉扎斯菲尔德]）<sep>耶鲁学派（[霍夫兰]）",2],
+      ["三个机制","选择性接触<sep>两级传播与人际影响<sep>劝服效果影响机制",3],
+      ["意义","否定魔弹论的笼统判断，效果研究走向科学化"],
+      ["两个局限","只关注态度行为、忽视认知效果<sep>只关注短期、忽视长期效果",2]
+    ]},
+    { id:"zjys", n:"中介因素论", tags:["必背","5分名解","上次失分"], must:1, rows:[
+      ["提出者 · 年份","[克拉珀]　{1960}　《大众传播效果》（笔记另作《大众媒体效果》，均可）"],
+      ["别名","<em>强化固有观念论</em>"],
+      ["核心","中介因素对媒介内容起阻碍、曲解、过滤和规避作用，所以大众传播多是强化而非改变"],
+      ["中介因素","个人倾向性（固有观念）<sep>选择过程（选择性接触、理解、记忆）<sep>社团规范<sep>个人影响（舆论领袖、权威人士、把关人）<sep>自由企业制度中大众媒介的性质",5],
+      ["五个普遍原则","①不是必要充分因素，通过中介起作用　②强化现状时是辅助性力量　③改变现状需二条件之一：中介失效／中介本身促变　④特殊情况下能直接产生后果　⑤效能大小并无定论",5]
+    ]},
+    { id:"cgqxg", n:"重归强效果（宏观效果论）", tags:["转向题"], rows:[
+      ["时段","{20世纪60年代中后期}起"],
+      ["五个背景","媒介环境移向电视<sep>注意力从「态度·行为」转向「信息·认知」<sep>政治意识淡化，预存立场说失据<sep>认知革命<sep>学科建制化与欧洲批判学派崛起",5],
+      ["三个共同特点","焦点在综合的、较长期的、宏观的社会效果<sep>强调传媒影响的有力性<sep>与社会信息化现实密切结合",3],
+      ["四个代表理论","议程设置<sep>沉默的螺旋<sep>知沟<sep>培养分析",4],
+      ["强度分类（赛弗林）","议程设置、培养理论＝<em>适度效果</em>　｜　沉默的螺旋＝<em>强力效果</em>"],
+      ["与魔弹论的区别","建立在实证分析之上<sep>强调对认知的影响，而非直接无差别的效果<sep>强效果是<em>有条件</em>的（高度重复同质的讯息、舆论呈现高度一致）",3]
+    ]},
+    { id:"sdxg", n:"适度效果论 / 强大效果理论", tags:["必背","5分名解","上次失分"], must:1, rows:[
+      ["适度效果论","{20世纪70年代}　[赛弗林] & [坦卡德]"],
+      ["适度 · 核心","有时威力巨大、有时微弱不明显、有时介于两者之间——居于魔弹论与有限效果论<em>之间</em>"],
+      ["强大效果论","[伊丽莎白·内尔-纽曼]《回归强大的大众媒介概念》；沉默的螺旋属于这一类"],
+      ["强大 · 佐证","{1979} [鲍尔-罗克齐] 等「伟大美国价值观」测验——半小时节目即改变观众态度"],
+      ["强大 · 核心","按传播理论原则审慎筹划，大众传播就能发挥强大影响；但它承认传播过程充满中介性因素"]
+    ]}
+  ]},
+  { t:"三、传播效果的「驯服」层次：恐惧传承与寓教于乐", skip:"扣叔：不考", entries:[] }
+  ]
+},
+{
+  id:"C16", no:"第十六讲", stars:"★★★★★", pages:"p197–209",
+  title:"个人效果与群体效果：认知、宣传说服、个人社会化",
+  jie:[
+  { t:"一、个人效果 · 宣传研究", entries:[
+    { id:"xuanc", n:"宣传", tags:["必背","5分名解"], must:1, rows:[
+      ["定义骨架","传播者有意图地<em>操纵象征符号</em>，塑造群体的认知方式和对现实的认知，进而影响其态度和行为的信息传播体制"],
+      ["三色","白色（公开）<sep>黑色（隐蔽）<sep>灰色（来源不明）",3],
+      ["功能","对个人：塑造形象、促进沟通、改善环境<sep>对社会：表达政策主张、传播真理、意识形态引导"],
+      ["影响因素","宣传者、对象、内容、场合、时机、动机"]
+    ], tip:"和新闻理论框架卡第三讲的「宣传」是同一个名解，扣叔：记一次就行。" },
+    { id:"sjdz", n:"《世界大战中的宣传技巧》", tags:["一般不考"], dim:1, rows:[
+      ["作者 · 年份","[哈罗德·D.拉斯韦尔]　{1927}　博士论文"],
+      ["四个目的","激发对敌人的仇恨<sep>维系与盟国的友谊<sep>与中立国保持良好关系并争取合作<sep>瓦解敌方斗志",4]
+    ]},
+    { id:"xc7", n:"《宣传的完美艺术》七种宣传技巧", tags:["必背","15分简答","上次失分"], must:1, rows:[
+      ["作者 · 实例","[阿尔弗雷德·李] & [伊丽莎白·李]；以库格林神父为宣传实例"],
+      ["七种技巧","辱骂法<sep>光环法<sep>转移法<sep>证词法<sep>平民百姓法<sep>洗牌作弊法<sep>从众法",7],
+      ["英文","Name Calling · Glittering Generality · Transfer · Testimonial · Plain Folks · Card Stacking · Band Wagon"],
+      ["记忆钩子","骂人 → 贴金 → 借光 → 找人背书 → 装百姓 → 只说一面 → 大家都在做"]
+    ]}
+  ]},
+  { t:"一、个人效果 · 说服研究", note:"扣叔：说服研究的名词解释和各种说服技巧的名词都要记", entries:[
+    { id:"sfyj", n:"说服研究（劝服理论）", tags:["必背","名解"], must:1, rows:[
+      ["定义骨架","探讨<em>态度改变</em>机制的传播学理论，关注个体如何通过接受外部信息改变原有态度"],
+      ["源头","古希腊 [亚里士多德]《修辞学》"],
+      ["发展","[霍夫兰] {20世纪40—50年代} 控制实验 → 耶鲁「传播和态度改变」研究 → 转向态度改变的认知过程、多变量共同作用"],
+      ["三条批评","实验环境与现实情境有差异<sep>实验时间过短<sep>忽略态度改变是否伴随行为改变",3]
+    ]},
+    { id:"lj", n:"霍夫兰的美国陆军研究", tags:["背景即可"], rows:[
+      ["主持 · 年份","[卡尔·I.霍夫兰]；美国陆军部信息和教育局研究处；实验始于 {1943}"],
+      ["两项内容","评估现有电影的效果<sep>对比不同拍法的同一内容影片",2],
+      ["四条结论","增加认知有效、改变动机态度有限<sep>受教育程度高者更易获知<sep>两面说辞对高教育者更有效、单面对低教育者更有效<sep>长时间接收比短时间更易改变态度",4],
+      ["定位","「当代研究态度改变最重要的起源」"]
+    ]},
+    { id:"yl", n:"耶鲁研究", tags:["背景即可"], rows:[
+      ["时段 · 规模","{1946–1961}　超过 {50} 项实验"],
+      ["代表著作","《传播与说服》{1953}"],
+      ["四个发现","信源可信度对即时改变重要但暂时<sep>威胁恐惧元素促进意见变化<sep>群体归属感强者难说服、自尊心弱者易受影响<sep>主动参与者更易改变",4]
+    ]},
+    { id:"kxx", n:"可信性效果", tags:["必背","核心重点","上次失分"], must:1, rows:[
+      ["提出","[霍夫兰]　{20世纪50年代}"],
+      ["两个要素","传播者的<em>信誉</em>（诚实、客观、公正等品格条件）<sep><em>专业权威性</em>（expertness，对特定问题有无发言权和发言资格）",2],
+      ["基本关系","信源可信度越高，说服效果越好"],
+      ["反例","高可信度来源支持过多的东西时有效性下降（明星代言过多广告）"]
+    ]},
+    { id:"xmxg", n:"休眠效果", tags:["必背","5分名解","上次失分"], must:1, rows:[
+      ["提出","[卡尔·霍夫兰]"],
+      ["机制","低可信度信源的信息 → 因可信性的<em>负影响</em>，内容说服力处于「睡眠」状态 → 一段时间后负影响减弱或消失 → 效果才充分表现"],
+      ["结论口径","<em>短期看信源，长期看内容</em>——最终起决定作用的是内容本身的说服力"]
+    ]},
+    { id:"ymlm", n:"一面提示 / 两面提示", tags:["必背","核心重点"], must:1, rows:[
+      ["一面提示","只提示己方观点或有利材料——论旨明快，但易给人咄咄逼人之感、引起心理抗拒"],
+      ["两面提示","同时提示对立方观点或不利材料——给人「公平」感、产生<em>免疫效果</em>；但论旨复杂，把握不好会替对方宣传"],
+      ["两条适用规律","原本<em>赞成</em>者 → 一面提示更好；原本<em>否定</em>者 → 两面提示更好<sep>文化水平<em>低</em>者 → 一面提示更好；文化水平<em>高</em>者 → 两面提示更好",2],
+      ["比较研究者","[霍夫兰]、[拉姆斯丁]、[贾尼斯]"]
+    ]},
+    { id:"yfjz", n:"预防接种理论（免疫效果）", tags:["必背","15分简答","上次失分"], must:1, rows:[
+      ["提出者","[麦圭尔] & [帕帕乔吉斯]"],
+      ["机制","两面提示含对相反观点的「说明」→ 如同事先接种疫苗 → 日后遇到对立宣传时抵抗力更强"],
+      ["获得抵抗力的两条途径","<em>滋养</em>（Supportive Treatment）<sep><em>预防接种</em>（Inoculation）",2],
+      ["结论","就产生的抵抗力而言，<em>预防接种比滋养更有效</em>"]
+    ]},
+    { id:"msjl", n:"明示结论 / 寓观点于材料之中", tags:["必背","核心重点"], must:1, rows:[
+      ["两种方式的优劣","明示结论：观点鲜明易理解，但易引起反感<sep>寓观点于材料：让受众觉得「自己得出结论」，但主旨隐晦"],
+      ["三条应用","论题论旨<em>复杂</em> → 明示结论<sep>对象理解能力<em>较低</em> → 明示结论<sep>论题<em>简单</em>或对象水平较高 → 让对象自己得出结论",3]
+    ]},
+    { id:"szlx", n:"诉诸理性 / 诉诸感情", tags:["必背","核心重点"], must:1, rows:[
+      ["诉诸理性","摆事实、讲道理，用理性或逻辑的力量说服"],
+      ["诉诸感情","营造气氛或用感情色彩强烈的言辞感染对方"],
+      ["结论口径","因人、因事、因时而异；前提是把握问题性质、了解说服对象"]
+    ]},
+    { id:"jzxg", n:"警钟效果", tags:["必背","高频名解","上次失分"], must:1, rows:[
+      ["别名","<em>恐惧诉求</em>（Fear Appeals）"],
+      ["机制","「敲警钟」唤起危机意识和紧张心理，促成态度行为向一定方向变化"],
+      ["双重功效","强调利害关系 → 最大限度唤起注意、促成接触<sep>造成紧迫感 → 促使迅速采取行动",2],
+      ["局限","带来心理不适；分寸不当易招致<em>防卫性反应</em>，产生负面效果"]
+    ], tip:"9/11 逐题考察时<b>第二次答成「恐慌效果」</b>。它和诉诸理性、诉诸感情是一家——都是「诉」字辈的说服技巧；「恐慌」是火星人入侵讲的受众反应。" },
+    { id:"cbdx", n:"传播对象与说服效果", tags:["必背","核心重点","上次失分"], must:1, rows:[
+      ["四个因素","受众<em>智商</em>（教育水平）<sep><em>群体归属感</em><sep><em>个性因素</em><sep><em>是否主动参与</em>",4],
+      ["关键关系","自信心水平与可说服性成<em>反比</em>——自尊心较弱的人更易受影响"]
+    ]}
+  ]},
+  { t:"一、个人效果 · 传播流研究", entries:[
+    { id:"cbl", n:"传播流", tags:["必背","5分名解","上次失分"], must:1, rows:[
+      ["定义骨架","由大众传播媒体发出的信息，经过一系列<em>中间环节</em>，最终流向传播对象的社会过程"],
+      ["链条","大众传播 → 意见领袖 → 一般受众"],
+      ["四部代表作","《人民的选择》[拉扎斯菲尔德]<sep>《个人影响》[卡茨]<sep>《创新与普及》[罗杰斯]<sep>《大众传播效果》[克拉帕]",4],
+      ["两种流","<em>信息流</em>：媒介信息能直接到达受众<sep><em>影响流</em>：需经意见领袖等中介多次传递",2]
+    ]},
+    { id:"rmxz", n:"《人民的选择》· 伊里调查", tags:["考纲","必背","大考点","上次失分"], must:1, rows:[
+      ["出版年 · 三作者","{1944}　[保罗·拉扎斯菲尔德]、[伯纳德·贝雷尔森]、[黑兹尔·高德特]"],
+      ["调查","{1940} 年美国<em>俄亥俄州伊里县</em>总统大选期间"],
+      ["方法","<em>固定样本（panel）研究法</em>——纵贯研究，对同一批人多次调查"],
+      ["样本数字","{3000} 名初访者 → {600} 人固定样本；{1940年5—11月} 追踪"],
+      ["大众传播的三种效果","<em>激活</em><sep><em>强化</em><sep><em>倒戈</em>——其中<em>强化最显著</em>",3],
+      ["五个发现","社会属性决定政治倾向<sep>大众媒体影响有限<sep>两级流动模式<sep>舆论领袖比大众媒体更有效<sep>兴趣最低、最不关心者最易改变立场",5],
+      ["派生的三个理论","既有政治倾向假说<sep>选择性接触假说<sep>两级传播与意见领袖",3]
+    ], tip:"9/11 逐题考察：<b>三种效果只答对了「强化」</b>，<b>研究方法没答出</b>——这两处先过。区分方法：哥伦比亚学派做「调查」（固定样本），耶鲁学派做「实验」（控制实验）。" },
+    { id:"jyzz", n:"既有政治倾向假说", tags:["次要考点","上次失分"], rows:[
+      ["关键数字","超过 {90%} 全程未改变投票意向，仅 {8%} 改变"],
+      ["核心命题","政治决策不取决于一时的宣传，而取决于人们<em>既有的政治立场和态度</em>"]
+    ]},
+    { id:"xzxjc", n:"选择性接触假说", tags:["考纲","必背","20分简答","上次失分"], must:1, rows:[
+      ["提出","{20世纪40年代初}　[拉扎斯菲尔德] 等，伊里调查"],
+      ["核心","受众倾向接触与既有立场一致或接近的内容，回避相左的内容"],
+      ["三个层次","[克拉珀] {1960}：<em>选择性注意</em><sep><em>选择性理解</em><sep><em>选择性记忆</em>",3],
+      ["评价口径","受众有能动性，但选择仍在媒介提供的范围内——是<em>被动情境中的主动行为</em>"]
+    ]},
+    { id:"ljcb", n:"两级传播", tags:["考纲","必背","5分名解"], must:1, rows:[
+      ["提出","[保罗·拉扎斯菲尔德]　{1940} 伊里调查"],
+      ["两个阶段","信息<em>传达</em>：源头 → 大众媒介 → 意见领袖<sep>人际<em>影响</em>扩散：意见领袖 → 普通民众",2],
+      ["意义","揭示大众传播与人际传播的特殊互动关系"]
+    ]},
+    { id:"yjlx", n:"意见领袖", tags:["考纲","必背","20分简答","上次失分"], must:1, rows:[
+      ["首次提出","[拉扎斯菲尔德] 等《人民的选择》{1944}"],
+      ["四个特点","<em>平等关系</em>（非上下级，多为亲友邻居同事）<sep><em>分布广泛</em>（各群体阶层都有）<sep><em>影响力类型</em>（都市＝单一型／农村＝综合型）<sep><em>社交活跃</em>",4],
+      ["四项功能","<em>加工与解释</em><sep><em>扩散与传播</em><sep><em>支配与引导</em><sep><em>协调与干扰</em>",4],
+      ["意义","打破大众传播具有「神弹威力」的说法"]
+    ], tip:"9/11 逐题考察已改对「平等关系」✓；四项功能还没考到，下次先考它。" },
+    { id:"dkt", n:"迪凯特研究 ·《个人影响》", tags:["次要考点"], rows:[
+      ["主持 · 时段","[卡茨] & [拉扎斯菲尔德]　{1945–1955}　美国伊利诺伊州迪凯特"],
+      ["样本","随机抽取 {800} 位妇女"],
+      ["三个指标","生命周期阶段<sep>社会经济地位<sep>社交活跃程度",3],
+      ["四个领域","购物<sep>流行时尚<sep>公共事务<sep>看电影",4]
+    ]},
+    { id:"djcb", n:"多级传播（N 级传播）", tags:["次要考点"], rows:[
+      ["提出","[E.M.罗杰斯]——对两级传播的修正"],
+      ["核心","信息可以「一级」直达受众，但影响力往往经多层意见领袖逐级扩散"]
+    ]}
+  ]},
+  { t:"一、个人效果 · 认知主义学习论", skip:"扣叔：第四讲人内传播已列（基模、信息整合、详尽分析可能性模型），此处不重复。详尽分析可能性模型深大 2022 年考过（电商直播）", entries:[] },
+  { t:"一、个人效果 · 一致论与态度改变", note:"扣叔：考得少，偷懒可以不背", entries:[
+    { id:"yzl", n:"一致论四家", tags:["考得少"], dim:1, rows:[
+      ["海德 · 认知平衡理论","{1946}　POX 模型"],
+      ["奥斯古德 · 调和理论","平衡理论的特例，关注对信源 S 及其主张 O 的态度"],
+      ["纽科姆 · 均衡论","{1953}　ABX 模式"],
+      ["费斯廷格 · 认知不协调论","{1957}；两条途径：自我辩解／态度转变"]
+    ]}
+  ]},
+  { t:"二、群体效果", skip:"扣叔：考得少，重点在群体传播章节（谢里夫群体规范、阿西群体压力、勒温群体动力、社会认同）", entries:[] }
+  ]
+},
+{
+  id:"C17", no:"第十七讲", stars:"★★★★★", pages:"p209–224",
+  title:"社会效果与文化效果：创新扩散、知识沟、议程设置、涵化、沉默的螺旋、第三人效果",
+  jie:[
+  { t:"一、社会效果 · 创新扩散", entries:[
+    { id:"cxks", n:"创新扩散", tags:["考纲","必背","记500字","上次失分"], must:1, rows:[
+      ["提出 · 著作","[罗杰斯] & [休梅克]　《创新的扩散》{1962}"],
+      ["三条发展来源","传播媒介<sep>农业推广<sep>新药传播",3],
+      ["四个要素","<em>创新本身</em><sep><em>传播渠道</em><sep><em>时间</em><sep><em>社会系统</em>",4],
+      ["五个创新属性","<em>相对优势</em><sep><em>兼容性</em><sep><em>复杂性</em><sep><em>可试验性</em><sep><em>可观察性</em>",5],
+      ["五个决策阶段","<em>认知</em> → <em>说服</em> → <em>决策</em> → <em>实施</em> → <em>确认</em>",5],
+      ["五类采用者","<em>创新者</em><sep><em>早期采用者</em><sep><em>早期追随者</em><sep><em>后期采用者</em><sep><em>滞后者</em>",5],
+      ["渠道分工","大众媒介 ＋ 外地渠道 → <em>获知</em>阶段更重要；人际 ＋ 本地渠道 → <em>劝服</em>阶段更有力"]
+    ]}
+  ]},
+  { t:"一、社会效果 · 使用与满足", entries:[
+    { id:"symz", n:"使用与满足理论", tags:["考纲","必背","5分名解","深大考过"], must:1, rows:[
+      ["四位代表人物","[卡茨]<sep>[麦奎尔]<sep>[E.罗森格伦]<sep>[G.布卢姆勒]",4],
+      ["核心假定","受众有某些需求，是主动的、目标明确的，通过媒介或非媒介满足需求"],
+      ["范式转向","从「媒介对人们作了什么」→「<em>人们用媒介作了什么</em>」"],
+      ["两条意义","关注受众主动性，开创传播研究新阶段<sep>纠正「受众绝对被动」，否定子弹论，也矫正了过分强调无力的有限效果论",2],
+      ["三条局限","过于强调个人和心理因素、忽略社会结构（施拉姆：还远不能成为一种理论）<sep>忽视传媒内容的生产和提供<sep>能动性仅限于「有选择地接触」",3]
+    ], tip:"<b>深大关联</b>：2025 年 440 简答原题「解释『使用与满足』理论，并探讨社交媒体算法影响用户满足感的机制」。" },
+    { id:"kzms", n:"卡茨的「使用与满足」基本模式", tags:["必背","考点","上次失分"], must:1, rows:[
+      ["著作","[E.卡茨]《个人对大众传播的使用》"],
+      ["因果连锁（背原句）","<em>社会因素 ＋ 心理因素 → 媒介期待 → 媒介接触 → 需求满足</em>"],
+      ["接触媒介的两个条件","接触媒介的<em>可能性</em><sep><em>媒介印象</em>（过去经验形成的对媒介满足需求的评价）",2],
+      ["结果回流","满足与否都会修正媒介印象，改变之后的媒介期待与选择"],
+      ["五个基本假设","受众使用媒介有目的<sep>受众是媒介的主动使用者<sep>媒介只能满足部分需求，要与其他来源竞争<sep>资料来自受众自我报告（假设受众理性）<sep>不必对大众传播下价值判断",5],
+      ["五种需要","<em>认知</em>的需求<sep><em>情感</em>的需求<sep><em>个人整合</em>的需要<sep><em>社会整合</em>的需要<sep><em>舒解压力</em>的需要",5]
+    ]}
+  ]},
+  { t:"一、社会效果 · 议程设置", entries:[
+    { id:"yc1", n:"议程设置（第一层 / 客体议程设置）", tags:["考纲","必背","15分简答","上次失分"], must:1, rows:[
+      ["提出者","[麦库姆斯] & [肖]"],
+      ["首次实证","{1968} 年美国总统大选期间，北卡罗来纳州<em>查佩尔希尔</em>"],
+      ["论文 · 年份","《大众传播媒介的议程设置功能》{1972}"],
+      ["精神之父","[李普曼]《舆论》{1922}——「外在世界」构成「我们头脑中的世界」"],
+      ["三个特点","着眼<em>认知</em>层面，告诉人们「想什么」<sep>中长期的、综合的、宏观的社会效果<sep>传媒是「<em>环境再构成作业的机构</em>」",3],
+      ["四个意义","重新揭示传媒的有力影响，助效果研究摆脱「有限论」<sep>重提大众传播背后的<em>控制</em>问题<sep>对考察舆论导向有启发<sep>提供认识传播与社会的新角度",4],
+      ["两个局限","只强调「设置」议题，未涉及反映社会议题的一面<sep>强大效果过于绝对化",2],
+      ["四重转折","有限 → 适度效果<sep>短期 → 长期研究<sep>传统心理学 → 认知心理学<sep>开拓性 → 计划性研究",4]
+    ]},
+    { id:"dxxq", n:"导向需求", tags:["理解"], rows:[
+      ["提出","[麦库姆斯] & [韦弗]　{1972} 夏洛特研究"],
+      ["两个构成","<em>相关性</em>（Relevance）＋ <em>不确定感</em>（Uncertainty）",2],
+      ["三档","低相关 → 低导向需求<sep>高相关 ＋ 低不确定 → 中等<sep>高相关 ＋ 高不确定 → 高导向需求",3]
+    ]},
+    { id:"ycrh", n:"议程融合", tags:["必背","背"], must:1, rows:[
+      ["提出","[麦库姆斯] & [唐纳德·肖] 等　{20世纪末}　Agenda Melding"],
+      ["核心","媒体议程有<em>聚集社会群体</em>的功能——人们通过融入议程来加入群体"],
+      ["六个阶段 T1–T6","加入社群的需要 → 已掌握的信息量决定媒介使用 → 产生定向需要 → 利用各类媒体 → 议程设置第一层 → 第二层",6],
+      ["两个贡献","人们面对议程不是被动的，而是按社群归属主动选择<sep>不把大众传媒当议程设置的唯一主体，人际传播也算",2]
+    ]},
+    { id:"yc2", n:"属性议程设置（第二层）", tags:["必背","5分名解","上次失分"], must:1, rows:[
+      ["两层对照","第一层传递<em>对象</em>的显著性　｜　第二层传递<em>属性</em>的显著性"],
+      ["标志口径","不仅告诉公众「<em>想什么</em>」，也能告诉公众「<em>怎么想</em>」"],
+      ["机制","对特定属性的<em>凸显或淡化</em>，把对象的主导属性传达给受众"],
+      ["反向效应","「<em>引人注目的论据</em>」——第二层反过来影响第一层"]
+    ]},
+    { id:"yc3", n:"网络议程设置（第三层 / NAS）", tags:["必背","背"], must:1, rows:[
+      ["提出","[郭蕾] & [麦库姆斯] 等"],
+      ["核心","影响公众的不是单个议题或属性，而是一系列议题组成的<em>认知网络</em>；媒体还决定我们如何<em>把信息碎片联系起来</em>"],
+      ["方法","认知网络理论 ＋ 社会网络分析；节点＝议题的客体或属性（不是人）"]
+    ]}
+  ]},
+  { t:"一、社会效果 · 知识沟", entries:[
+    { id:"zsg", n:"知识沟", tags:["考纲","必背","5分名解","上次失分"], must:1, rows:[
+      ["年份 · 三学者","{1970}　[蒂奇纳]、[多诺霍]、[奥里恩]"],
+      ["论文","《大众传播流动和知识差别的增长》"],
+      ["背景节目","《<em>芝麻街</em>》——富裕儿童收视率和效果反而更高"],
+      ["核心命题","信息量增加 → 高社会经济地位者获取<em>更快</em> → 知识沟<em>扩大</em>而非缩小"],
+      ["五条理由","传播技能有区别<sep>已有信息量和背景知识不同<sep>社会联系多寡不同<sep>选择性接触、接受、记忆的作用不同<sep>大众媒介系统本身倾向服务高社会经济地位者",5]
+    ]},
+    { id:"xxg", n:"信息沟", tags:["理解"], rows:[
+      ["提出","[卡茨曼]——信息富有者 vs 信息贫困者"],
+      ["四点","信息流量总体增大<sep>获益并不均等<sep>信息富裕阶层早用熟用，优势更大<sep>旧沟未平，新沟又起",4]
+    ]},
+    { id:"sxxg", n:"上限效果（天花板效果）", tags:["理解"], rows:[
+      ["提出","[艾蒂玛] & [克莱因]　{1977}"],
+      ["定位","与知识沟<em>相反</em>的观点"],
+      ["核心","知识追求有「上限」；高地位者上限来得早，低地位者最终能在上限上<em>赶上</em>"]
+    ]}
+  ]},
+  { t:"一、社会效果 · 数字鸿沟", note:"扣叔：专题学习时再背", entries:[
+    { id:"szhg", n:"数字鸿沟 · 智能鸿沟 · 数字代沟", tags:["专题再背","20分简答"], rows:[
+      ["出现","{20世纪90年代}，随互联网普及"],
+      ["三个阶段","<em>接入鸿沟</em> → <em>素养鸿沟</em> → <em>智能鸿沟</em>",3],
+      ["智能鸿沟","算法鸿沟；欧盟《人工智能法》提案、中国《互联网信息服务算法推荐管理规定》"],
+      ["数字代沟","不同年龄段在数字接入、使用和素养上的差异"]
+    ]}
+  ]},
+  { t:"一、社会效果 · 沉默的螺旋", entries:[
+    { id:"cmlx", n:"沉默的螺旋理论", tags:["考纲","必背","5分名解","上次失分"], must:1, rows:[
+      ["提出者","德国学者 [伊丽莎白·诺尔-诺依曼]"],
+      ["核心","少数意见者因<em>害怕被孤立</em>而沉默，多数意见者更愿表达 → 一方越来越显著、另一方越来越边缘"],
+      ["四个关键要素","大众媒介<sep>人际传播与社会关系<sep>个别的意见表达<sep>对「意见气候」的感知",4],
+      ["大众传播三特质","<em>累积性</em><sep><em>遍在性</em><sep><em>共鸣性</em>",3],
+      ["两个关键概念","<em>意见气候</em>：环境中的意见分布（来源＝群体意见 ＋ 大众传播）<sep><em>准感官统计</em>：判断意见气候的能力",2],
+      ["批评","过于简化社会心理和行为动机，忽略不同社会文化条件的影响"]
+    ], tip:"⚠️ 你的笔记 p218 写「累积性、<b>普遍性</b>、<b>协调性</b>」，p220 写「累积、遍在、共鸣」——<b>按后者背</b>，郭庆光《传播学教程》的标准表述是累积性、遍在性、共鸣性。" },
+    { id:"cm5", n:"沉默的螺旋的五个假设", tags:["低频简答"], rows:[
+      ["五个假设","社会的群体性使背离者产生孤独感<sep>个人经常恐惧孤独（「害怕孤立」）<sep>对孤独的恐惧使个人不断评估「多数人」的观点<sep>评估结果影响其是否公开表达<sep>上述四者形成、巩固和改变了公众观念",5]
+    ]},
+    { id:"cm3", n:"沉默的螺旋的三个基本命题", tags:["必背","20分简答","超高频","上次失分"], must:1, rows:[
+      ["三个命题（标题一字不改）","①个人意见的表明是一个<em>社会心理过程</em><sep>②意见的表明和「沉默」的扩散是一个<em>螺旋式的社会传播过程</em><sep>③大众传播通过营造「<em>意见环境</em>」来影响和制约舆论",3],
+      ["关键词","<em>心理 → 螺旋 → 环境</em>"],
+      ["展开逻辑","个人<em>为什么</em>沉默（怕孤立）→ 沉默<em>怎么</em>扩散（一方沉默另一方增势）→ 媒介<em>干了什么</em>（营造意见环境，受众缺少其他信源时会把少数误认为多数）"]
+    ], tip:"9/10 自测、9/11 逐题考察<b>两次都没答出</b>，是这三讲失分最重的一条。扣叔：标题背死，内容灵活编。" },
+    { id:"cmgd", n:"沉默的螺旋的舆论观与效果观", tags:["必背","中频简答"], must:1, rows:[
+      ["舆论观","舆论＝「<em>公开的意见</em>」——被认为多数人共有、能在公开场合表明的意见；唱反调者面临孤立与制裁"],
+      ["「社会皮肤」两重功能","个人感知意见气候、调整行为的<em>感知屏障</em><sep>像容器的皮肤一样维持<em>社会整合</em>，防止意见过度分裂",2],
+      ["效果观","大众传播具有「<em>创造社会现实</em>」的力量；公众处于「<em>多元无知</em>」，会把媒介呈现的少数意见误判为多数"],
+      ["影响路径","认知 → 判断·意见 → 行动"]
+    ], tip:"新闻理论框架卡第三讲「新闻媒介与舆论导向」的「引导舆论」用的就是这条——两边打通。" }
+  ]},
+  { t:"一、社会效果 · 第三人效果", entries:[
+    { id:"dsr", n:"第三人效果", tags:["考纲","必背","5分名解","20分简答"], must:1, rows:[
+      ["提出 · 年份 · 刊物","[菲利普·戴维森]　{1983}　《<em>公共舆论季刊</em>》"],
+      ["现实背景","二战日军向驻岛美军（白人军官 ＋ 黑人士兵）投放传单——真正采取行动的是<em>白人军官</em>"],
+      ["核心感知定势","信息对「我」「你」影响有限，对「<em>他</em>」影响很大"],
+      ["两个假说","<em>感觉假说</em>：认为媒介对他人影响大于对自己<sep><em>行为假说</em>：因此采取行动、支持限制媒介内容",2],
+      ["四类制约因素","<em>信息的性质</em>（负面信息更易产生）<sep><em>信源的性质</em>（低可信度、说服动机强）<sep><em>社会距离</em>（越远认为影响越大）<sep><em>个人因素</em>（年龄、学历、预存立场、自我关联、专业感）",4],
+      ["自我强化的三种表现","<em>盲目乐观</em><sep><em>虚幻的优越感</em><sep><em>自我服务式归因</em>",3],
+      ["反向概念","正面信息上相反 → 「<em>第一人效果</em>」（反转的第三人效果）"]
+    ]}
+  ]},
+  { t:"二、文化效果", entries:[
+    { id:"dsbl", n:"电视暴力研究", tags:["理解即可"], rows:[
+      ["起点","{1968} 美国「暴力原因和防范国家委员会」报告《<em>暴力与媒体</em>》"],
+      ["两期效果","短期：学会并付诸实践<sep>长期：冷漠麻木、倾向暴力",2],
+      ["五种假说","<em>模仿</em>假说（班杜拉社会学习）<sep><em>免除抑制</em>假说<sep><em>净化作用</em>假说<sep><em>预示</em>效果<sep><em>脚本</em>理论",5]
+    ]},
+    { id:"pylr", n:"培养理论（涵化理论）", tags:["考纲","必背","5分名解","上次失分"], must:1, rows:[
+      ["提出者 · 年份","[乔治·格伯纳]　{1969}"],
+      ["两种方法","<em>内容分析法</em>（测节目信息出现频率）<sep><em>实地调查法</em>（问观众的现实观念）",2],
+      ["核心命题","观众的现实观更接近电视的「<em>符号现实</em>」而非客观现实；<em>重度收视者</em>更明显"],
+      ["80 年代后补充","<em>主流化</em><sep><em>共鸣</em>",2],
+      ["冷酷世界症候群","长期看暴力电视 → 没有安全感、把世界看成卑鄙之境、对暴力及受害人失去同情"],
+      ["评价","强调长期累积效果和受众的无选择性；是大众传播与文化关系研究的代表理论"]
+    ]},
+    { id:"whzb", n:"文化指标研究", tags:["配套"], rows:[
+      ["主持 · 起始年","[乔治·格伯纳] 团队　{1972}"],
+      ["三个部分","传媒体系制作过程分析<sep>传媒讯息系统分析<sep>培养分析",3]
+    ]}
+  ]}
+  ]
+}
+];
 
-            attempts--;
-            updateAttempts();
+/* ------------------------------------------------------------------ */
+const CIRCLED={1:"①",2:"②",3:"③",4:"④",5:"⑤",6:"⑥",7:"⑦",8:"⑧",9:"⑨",10:"⑩"};
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function fmt(raw){
+  let s=esc(raw);
+  s=s.replace(/&lt;sep&gt;/g,'<span class="sep">｜</span>');
+  s=s.replace(/&lt;em&gt;/g,'<span class="em">').replace(/&lt;\/em&gt;/g,'</span>');
+  s=s.replace(/&lt;b&gt;/g,'<b>').replace(/&lt;\/b&gt;/g,'</b>');
+  s=s.replace(/&lt;br&gt;/g,'<br>');
+  s=s.replace(/\{([^}]+)\}/g,'<span class="num">$1</span>');
+  s=s.replace(/\[([^\]]+)\]/g,'<span class="who">$1</span>');
+  s=s.replace(/《([^》]+)》/g,'<span class="bk">《$1》</span>');
+  return s;
+}
+function isExam(t){ return /必背|深大|名解|简答|论述|常考|第八版/.test(t); }
 
-            if (attempts <= 0) {
-                endGame("❌ 次数用完了，正确答案是 " + secret, "red");
-                return;
-            }
+function render(){
+  let nE=0, nM=0, tree="", main="";
+  DATA.forEach(lec=>{
+    /* tree */
+    tree+='<div class="t-lec"><div class="t-lec-h"><span class="t-lec-no">'+esc(lec.no)+'</span>'+
+          '<span class="t-lec-t">'+esc(lec.title)+'</span></div>';
+    lec.jie.forEach(j=>{
+      tree+='<div class="t-jie"><p class="t-jie-t">'+esc(j.t)+(j.skip?'<span class="skipnote">　不用背</span>':'')+'</p>';
+      if(j.entries.length){
+        tree+='<ul class="t-items">'+j.entries.map(e=>
+          '<li'+(e.dim?' class="dim"':'')+'><a class="val" href="#e-'+e.id+'">'+esc(e.n)+'</a>'+
+          (e.must?'<span class="mk">必背</span>':'')+'</li>').join("")+'</ul>';
+      }
+      tree+='</div>';
+    });
+    tree+='</div>';
 
-            let result = document.getElementById("result");
+    /* cards */
+    main+='<section class="lecture" id="'+lec.id+'"><div class="lec-head">'+
+      '<span class="lec-no">'+esc(lec.no)+'</span><h2 class="lec-title">'+esc(lec.title)+'</h2>'+
+      '<p class="lec-sub">'+esc(lec.pages)+'</p><span class="stars">'+esc(lec.stars)+'</span></div>';
+    lec.jie.forEach(j=>{
+      main+='<div class="jie-head"><span class="jie-t">'+esc(j.t)+'</span>'+
+        ((j.skip||j.note)?'<span class="jie-note">'+esc(j.skip||j.note)+'</span>':'')+'</div>';
+      j.entries.forEach(e=>{
+        nE++; if(e.must) nM++;
+        const tags=(e.tags||[]).map(t=>'<span class="tag'+(t==="上次失分"?' miss':(isExam(t)&&!e.dim?' exam':''))+'">'+esc(t)+'</span>').join("");
+        const rows=e.rows.map(r=>{
+          const c=r[2]?'<span class="cnt">'+(CIRCLED[r[2]]||r[2])+'</span>':'';
+          return '<div class="lab">'+c+'<span>'+esc(r[0]).replace(/[\[\]{}]/g,"")+'</span></div><div class="val">'+fmt(r[1])+'</div>';
+        }).join("");
+        const tip=e.tip?'<span class="tip">'+fmt(e.tip)+'</span>':'';
+        const s=(e.n+" "+(e.tags||[]).join(" ")+" "+e.rows.map(r=>r[0]+" "+r[1]).join(" ")).toLowerCase();
+        main+='<article class="entry'+(e.dim?' dim':'')+'" id="e-'+e.id+'" data-must="'+(e.must?1:0)+'" data-s="'+esc(s)+'">'+
+          '<div class="e-head"><span class="e-name">'+esc(e.n)+'</span>'+tags+'</div>'+
+          '<div class="rows">'+rows+'</div>'+tip+'</article>';
+      });
+    });
+    main+='<p class="emptynote hidden">本讲没有匹配的知识点</p></section>';
+  });
+  document.getElementById("tree-grid").innerHTML=tree;
+  document.getElementById("content").innerHTML=main;
+  document.getElementById("tally-e").textContent=nE;
+  document.getElementById("tally-m").textContent=nM;
+}
+render();
 
-            if (guess > secret) {
-                result.innerHTML = "📈 太大了";
-                result.style.color = "orange";
-            } else {
-                result.innerHTML = "📉 太小了";
-                result.style.color = "orange";
-            }
-        }
-    </script>
+/* ---------- controls ---------- */
+const body=document.body;
+const btnMask=document.getElementById("btn-mask");
+const btnMust=document.getElementById("btn-must");
+const btnReveal=document.getElementById("btn-reveal");
+const search=document.getElementById("search");
+function store(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function load(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 
+function setMask(on){
+  body.classList.toggle("masked",on);
+  btnMask.setAttribute("aria-pressed",on?"true":"false");
+  btnMask.textContent=on?"退出自测":"遮挡自测";
+  if(!on) document.querySelectorAll(".val.peek").forEach(v=>v.classList.remove("peek"));
+  store("cf-mask",on?"1":"0");
+}
+btnMask.addEventListener("click",()=>setMask(!body.classList.contains("masked")));
+btnReveal.addEventListener("click",()=>document.querySelectorAll(".val").forEach(v=>v.classList.add("peek")));
+
+document.addEventListener("click",ev=>{
+  if(!body.classList.contains("masked")) return;
+  const v=ev.target.closest(".val");
+  if(!v) return;
+  if(v.tagName==="A" && !v.classList.contains("peek")) ev.preventDefault();
+  v.classList.toggle("peek");
+});
+
+function applyFilter(){
+  const onlyMust=btnMust.getAttribute("aria-pressed")==="true";
+  const q=search.value.trim().toLowerCase();
+  document.querySelectorAll(".lecture").forEach(sec=>{
+    let shown=0;
+    sec.querySelectorAll(".entry").forEach(en=>{
+      const ok=(!onlyMust||en.dataset.must==="1")&&(!q||en.dataset.s.indexOf(q)>-1);
+      en.classList.toggle("hidden",!ok);
+      if(ok) shown++;
+    });
+    sec.querySelectorAll(".jie-head").forEach(h=>{
+      let n=h.nextElementSibling, any=false;
+      while(n && n.classList.contains("entry")){ if(!n.classList.contains("hidden")) any=true; n=n.nextElementSibling; }
+      h.classList.toggle("hidden", (onlyMust||q) ? !any : false);
+    });
+    sec.querySelector(".emptynote").classList.toggle("hidden",shown>0);
+  });
+}
+btnMust.addEventListener("click",()=>{
+  const on=btnMust.getAttribute("aria-pressed")!=="true";
+  btnMust.setAttribute("aria-pressed",on?"true":"false");
+  btnMust.textContent=on?"看全部":"只看必背";
+  applyFilter();
+});
+search.addEventListener("input",applyFilter);
+
+if(load("cf-mask")==="1") setMask(true);
+</script>
 </body>
-
 </html>
